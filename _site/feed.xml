@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-03-31T16:54:08-04:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Chanwoo’s notes</title><subtitle>NA
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-03-31T17:14:09-04:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Chanwoo’s notes</title><subtitle>NA
 </subtitle><author><name>Chanwoo Chun</name><email>cc2465@cornell.edu</email></author><entry><title type="html">Welcome to Jekyll!</title><link href="http://localhost:4000/jekyll/update/2023/03/31/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2023-03-31T16:06:46-04:00</published><updated>2023-03-31T16:06:46-04:00</updated><id>http://localhost:4000/jekyll/update/2023/03/31/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2023/03/31/welcome-to-jekyll.html"><![CDATA[<p>You’ll find this post in your <code class="language-plaintext highlighter-rouge">_posts</code> directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run <code class="language-plaintext highlighter-rouge">jekyll serve</code>, which launches a web server and auto-regenerates your site when a file is updated.</p>
 
 <p>Jekyll requires blog post files to be named according to the following format:</p>
@@ -20,4 +20,23 @@ $$ \sum_{i=1}^n x_i^2 = \mathcal{O}(1) $$
 <span class="n">print_hi</span><span class="p">(</span><span class="s1">'Tom'</span><span class="p">)</span>
 <span class="c1">#=&gt; prints 'Hi, Tom' to STDOUT.</span></code></pre></figure>
 
-<p>Check out the <a href="https://jekyllrb.com/docs/home">Jekyll docs</a> for more info on how to get the most out of Jekyll. File all bugs/feature requests at <a href="https://github.com/jekyll/jekyll">Jekyll’s GitHub repo</a>. If you have questions, you can ask them on <a href="https://talk.jekyllrb.com/">Jekyll Talk</a>.</p>]]></content><author><name>Chanwoo Chun</name><email>cc2465@cornell.edu</email></author><category term="jekyll" /><category term="update" /><summary type="html"><![CDATA[You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.]]></summary></entry></feed>
+<p>Check out the <a href="https://jekyllrb.com/docs/home">Jekyll docs</a> for more info on how to get the most out of Jekyll. File all bugs/feature requests at <a href="https://github.com/jekyll/jekyll">Jekyll’s GitHub repo</a>. If you have questions, you can ask them on <a href="https://talk.jekyllrb.com/">Jekyll Talk</a>.</p>]]></content><author><name>Chanwoo Chun</name><email>cc2465@cornell.edu</email></author><category term="jekyll" /><category term="update" /><summary type="html"><![CDATA[You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.]]></summary></entry><entry><title type="html">Notes on Temporal Difference</title><link href="http://localhost:4000/study/note/2023/03/31/temporal-difference.html" rel="alternate" type="text/html" title="Notes on Temporal Difference" /><published>2023-03-31T00:00:00-04:00</published><updated>2023-03-31T00:00:00-04:00</updated><id>http://localhost:4000/study/note/2023/03/31/temporal-difference</id><content type="html" xml:base="http://localhost:4000/study/note/2023/03/31/temporal-difference.html"><![CDATA[<p>This is my note on temporal difference. Heavily based on <a href="http://www.gatsby.ucl.ac.uk/teaching/courses/sntn/sntn-2017/resources/kirsty/Learning.pdf">(link)</a>.</p>
+
+<h3 id="rescorla-wagner-rule">Rescorla-Wagner rule</h3>
+
+<p>This models Pavlovian conditioning.</p>
+
+<p>Prediction of the reward:</p>
+<div>
+\begin{equation}
+ v= \mathbf{w}^{\top}\mathbf{u}
+\end{equation}
+</div>
+
+<p>Square error:</p>
+<div>
+\begin{align}
+E=&amp;\frac{1}{2}(r-v)^2 \\
+=&amp;\frac{1}{2}\|r- \mathbf{w}^\top \mathbf{u}\|^2
+\end{align}
+</div>]]></content><author><name>Chanwoo Chun</name><email>cc2465@cornell.edu</email></author><category term="study" /><category term="note" /><summary type="html"><![CDATA[This is my note on temporal difference. Heavily based on (link).]]></summary></entry></feed>

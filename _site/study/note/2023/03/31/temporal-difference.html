@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Notes on Temporal Difference | Chanwoo’s notes</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="Notes on Temporal Difference" />
+<meta name="author" content="Chanwoo Chun" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This is my note on temporal difference. Heavily based on (link)." />
+<meta property="og:description" content="This is my note on temporal difference. Heavily based on (link)." />
+<link rel="canonical" href="http://localhost:4000/study/note/2023/03/31/temporal-difference.html" />
+<meta property="og:url" content="http://localhost:4000/study/note/2023/03/31/temporal-difference.html" />
+<meta property="og:site_name" content="Chanwoo’s notes" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-03-31T00:00:00-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Notes on Temporal Difference" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Chanwoo Chun"},"dateModified":"2023-03-31T00:00:00-04:00","datePublished":"2023-03-31T00:00:00-04:00","description":"This is my note on temporal difference. Heavily based on (link).","headline":"Notes on Temporal Difference","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/study/note/2023/03/31/temporal-difference.html"},"url":"http://localhost:4000/study/note/2023/03/31/temporal-difference.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Chanwoo&apos;s notes" />
+<script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        tags: 'ams'
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+    </script>
+
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Chanwoo&#39;s notes</a></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Notes on Temporal Difference</h1>
+    <p class="post-meta"><time class="dt-published" datetime="2023-03-31T00:00:00-04:00" itemprop="datePublished">
+        Mar 31, 2023
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>This is my note on temporal difference. Heavily based on <a href="http://www.gatsby.ucl.ac.uk/teaching/courses/sntn/sntn-2017/resources/kirsty/Learning.pdf">(link)</a>.</p>
+
+<h3 id="rescorla-wagner-rule">Rescorla-Wagner rule</h3>
+
+<p>This models Pavlovian conditioning.</p>
+
+<p>Prediction of the reward:</p>
+<div>
+\begin{equation}
+ v= \mathbf{w}^{\top}\mathbf{u}
+\end{equation}
+</div>
+
+<p>Square error:</p>
+<div>
+\begin{align}
+E=&amp;\frac{1}{2}(r-v)^2 \\
+=&amp;\frac{1}{2}\|r- \mathbf{w}^\top \mathbf{u}\|^2
+\end{align}
+</div>
+
+  </div><a class="u-url" href="/study/note/2023/03/31/temporal-difference.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="http://localhost:4000/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+        <ul class="contact-list">
+          <li class="p-name">Chanwoo Chun</li>
+          <li><a class="u-email" href="mailto:cc2465@cornell.edu">cc2465@cornell.edu</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <p>NA
+</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
+
