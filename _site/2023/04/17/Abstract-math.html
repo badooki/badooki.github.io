@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>FAQ in abstract math and analysis | Chanwoo’s notes</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="FAQ in abstract math and analysis" />
+<meta name="author" content="Chanwoo Chun" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This note is complementary to textbooks and lecture notes available online. I do not aim to be as complete as those materials in my coverage of each topic. Instead, I am writing this note as FAQ (maybe saying “frequent” is incorrect here since I am really just providing answers to questions that I had, which is of sample size 1.) There are some “zones” of abstract math that can be confusing for people without formal math training, that are not addressed in any textbook. Therefore, they can never escape that zone. Hopefully, this can be a ladder for their escape, since it has been for me." />
+<meta property="og:description" content="This note is complementary to textbooks and lecture notes available online. I do not aim to be as complete as those materials in my coverage of each topic. Instead, I am writing this note as FAQ (maybe saying “frequent” is incorrect here since I am really just providing answers to questions that I had, which is of sample size 1.) There are some “zones” of abstract math that can be confusing for people without formal math training, that are not addressed in any textbook. Therefore, they can never escape that zone. Hopefully, this can be a ladder for their escape, since it has been for me." />
+<link rel="canonical" href="http://localhost:4000/2023/04/17/Abstract-math.html" />
+<meta property="og:url" content="http://localhost:4000/2023/04/17/Abstract-math.html" />
+<meta property="og:site_name" content="Chanwoo’s notes" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-04-17T00:00:00-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="FAQ in abstract math and analysis" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Chanwoo Chun"},"dateModified":"2023-04-17T00:00:00-04:00","datePublished":"2023-04-17T00:00:00-04:00","description":"This note is complementary to textbooks and lecture notes available online. I do not aim to be as complete as those materials in my coverage of each topic. Instead, I am writing this note as FAQ (maybe saying “frequent” is incorrect here since I am really just providing answers to questions that I had, which is of sample size 1.) There are some “zones” of abstract math that can be confusing for people without formal math training, that are not addressed in any textbook. Therefore, they can never escape that zone. Hopefully, this can be a ladder for their escape, since it has been for me.","headline":"FAQ in abstract math and analysis","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2023/04/17/Abstract-math.html"},"url":"http://localhost:4000/2023/04/17/Abstract-math.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Chanwoo&apos;s notes" />
+<script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        tags: 'ams'
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+    </script>
+
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Chanwoo&#39;s notes</a></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">FAQ in abstract math and analysis</h1>
+    <p class="post-meta"><time class="dt-published" datetime="2023-04-17T00:00:00-04:00" itemprop="datePublished">
+        Apr 17, 2023
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>This note is complementary to textbooks and lecture notes available online. I do not aim to be as complete as those materials in my coverage of each topic. Instead, I am writing this note as FAQ (maybe saying “frequent” is incorrect here since I am really just providing answers to questions that I had, which is of sample size 1.) There are some “zones” of abstract math that can be confusing for people without formal math training, that are not addressed in any textbook. Therefore, they can never escape that zone. Hopefully, this can be a ladder for their escape, since it has been for me.</p>
+
+<p>To me, this note is a collection of concepts that were hard to understand, as I studied towards understadning vector-valued reproducing kernel Hilbert space. The papers on this topic use mathematical jargons that are effective but hard to understand without some training. I needed to familiarize myself with the concepts of tensor, tensor product, and Hilbert space, which are all steming from group theory and vector spaces.</p>
+
+<h2 id="recommended-material">Recommended material</h2>
+<p><a href="http://www-users.med.cornell.edu/~jdvicto/jdv/mathcourse2223/GFVS2223.pdf">This is a lecture note</a> by Jonathan D. Victor on group, fields, and vector spaces.</p>
+
+<h2 id="group">Group</h2>
+
+<p>Group refers to a set elements and an operation performed on the elements. The following “group axioms” needs to be satisfied for the set and the operation to be defined as a group. (Following is directly from Victor’s lecture note):</p>
+
+<ol>
+  <li>
+    <p>Associativity: $a \circ (b \circ c) = (a \circ b) \circ c$</p>
+  </li>
+  <li>
+    <p>Identity: There is a special element $e\in G$ ($G$ is a group) for which, for every $a$ in $G$, $a \circ e = a$ and $e \circ a = a$</p>
+  </li>
+  <li>
+    <p>Existence of inverses: For every $a$ in $G$, there is a corresponding group element $a^{-1}$ for which $a \circ a^{-1} = e$ and $a^{-1} \circ a = e$. The operation need not be communtative.
+The operation mapps a pair of elements to another element, i.e. $\circ: G\times G \rightarrow G$.
+Group axioms define the fundamental and essential properties of a group, and they allow a group to be a set of transformations of an object that preserves some specified aspects of that object’s structure. This concretely and visually makes sense for a group such as dihedral group, but not so obvious even for a basic group such as $\mathbb{R}$ with addition. It turns out, the “object” in this case, is the real number line, and the “transformations” are translation along the number line (elements of $\mathbb{R}$ are the amount we translate along the line.) The object is preserved under the operation. In dihedral group, the object is a k-gon, and the transformations (or elements of the group) are rotations (for a square, 0, 90, 180, and 270 degree angle rotations) and reflections. The operation on the group is composition.</p>
+  </li>
+</ol>
+
+
+  </div><a class="u-url" href="/2023/04/17/Abstract-math.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="http://localhost:4000/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+        <ul class="contact-list">
+          <li class="p-name">Chanwoo Chun</li>
+          <li><a class="u-email" href="mailto:cc2465@cornell.edu">cc2465@cornell.edu</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <p>NA
+</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
+

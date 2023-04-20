@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Tutorial on Neural Tangent Kernel | Chanwoo’s notes</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="Tutorial on Neural Tangent Kernel" />
+<meta name="author" content="Chanwoo Chun" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Despite the popularity and importance of Neural Tangent Kernel, the original paper by Jacot et al. is not an easy read. Thankfully, there are a lot of lecture notes and blog posts available online that explains NTK in very simple terms, but none (to the best of my knowledge) illustrates the generality of “tangent kernel” that explains the evolution of any parameteric model descending down on any kind of cost function. This is in part because “tangent kernel” part of the paper is a bit abstract. Moreover, the general public (myself included) is more interested in what the paper has to say about neural networks and least-squares cost, where the derivation is less abstract and easier to follow." />
+<meta property="og:description" content="Despite the popularity and importance of Neural Tangent Kernel, the original paper by Jacot et al. is not an easy read. Thankfully, there are a lot of lecture notes and blog posts available online that explains NTK in very simple terms, but none (to the best of my knowledge) illustrates the generality of “tangent kernel” that explains the evolution of any parameteric model descending down on any kind of cost function. This is in part because “tangent kernel” part of the paper is a bit abstract. Moreover, the general public (myself included) is more interested in what the paper has to say about neural networks and least-squares cost, where the derivation is less abstract and easier to follow." />
+<link rel="canonical" href="http://localhost:4000/2023/04/14/NTK.html" />
+<meta property="og:url" content="http://localhost:4000/2023/04/14/NTK.html" />
+<meta property="og:site_name" content="Chanwoo’s notes" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-04-14T14:35:00-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Tutorial on Neural Tangent Kernel" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Chanwoo Chun"},"dateModified":"2023-04-14T14:35:00-04:00","datePublished":"2023-04-14T14:35:00-04:00","description":"Despite the popularity and importance of Neural Tangent Kernel, the original paper by Jacot et al. is not an easy read. Thankfully, there are a lot of lecture notes and blog posts available online that explains NTK in very simple terms, but none (to the best of my knowledge) illustrates the generality of “tangent kernel” that explains the evolution of any parameteric model descending down on any kind of cost function. This is in part because “tangent kernel” part of the paper is a bit abstract. Moreover, the general public (myself included) is more interested in what the paper has to say about neural networks and least-squares cost, where the derivation is less abstract and easier to follow.","headline":"Tutorial on Neural Tangent Kernel","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2023/04/14/NTK.html"},"url":"http://localhost:4000/2023/04/14/NTK.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Chanwoo&apos;s notes" />
+<script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        tags: 'ams'
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+    </script>
+
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Chanwoo&#39;s notes</a></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Tutorial on Neural Tangent Kernel</h1>
+    <p class="post-meta"><time class="dt-published" datetime="2023-04-14T14:35:00-04:00" itemprop="datePublished">
+        Apr 14, 2023
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>Despite the popularity and importance of Neural Tangent Kernel, the original paper by Jacot et al. is not an easy read. Thankfully, there are a lot of lecture notes and blog posts available online that explains NTK in very simple terms, but none (to the best of my knowledge) illustrates the generality of “tangent kernel” that explains the evolution of any parameteric model descending down on any kind of cost function. This is in part because “tangent kernel” part of the paper is a bit abstract. Moreover, the general public (myself included) is more interested in what the paper has to say about neural networks and least-squares cost, where the derivation is less abstract and easier to follow.</p>
+
+<p>In my opinion, the tangent kernel part is impenetrable since they start with a list of seemingly arbitrary definitions of norms and kernels without providing motivations and contexts, and then show how they can be used. In this blog post, I start with the context and derivation that are skipped in the paper, from which it can be clearly understood why the authors had to come up with those definitions. Here the proofs are written in a way that no steps are skipped. This post is self-contained. None of the statements made here are my own contribution.</p>
+
+<h1 id="construction-of-tangent-kernel">Construction of tangent kernel</h1>
+
+<p>The result reviewed here is quite general and not limited to neural network models or least-squares cost function. The cost function is $C:\mathcal{F}\rightarrow\mathbb{R}$ and the model is $F:\mathbb{R}^{N}\rightarrow\mathcal{F}$ . An element of the function space $\mathcal{F}$ is $f:\mathbb{R}^{d}\rightarrow\mathbb{R}^{m}$ . During training $f$ changes over time, so we may explicity show its time-dependency by writing $f(t)$. The output of the function for an input $x\in\mathbb{R}^{d}$ is explicity written as $f(t)(x)\in\mathbb{R}^{m}$. The cost function composed with the model is $C(f)$, or as $C(f(t))$ to show the time-dependency. Note that is $f(t)\in\mathcal{F}$, not $\in\mathbb{R}^{m}$.</p>
+
+<p>We want to know how the cost value $C(f(t))$ evolves over time. For that, we take derivative of $C(f(t))$. Start with an incorrect chain rule:</p>
+
+<p>\(\frac{\partial C(f(t))}{\partial t}=\frac{\partial C(f(t))}{\partial f(t)}\frac{\partial f(t)}{\partial t}\) The above is incorrect since I treated $f(t)$ like a scalar, when it is in fact, a function. If $f(t)$ is a vector, then we would sum the chain over its elements, i.e. $\sum_{i}\frac{\partial C(f(t))}{\partial f(t)<em>{i}}\frac{\partial f(t)</em>{i}}{\partial t}$. Here, we generalize this to the function $f(t)$ by treating a function as an infinite dimensional vector, which gives us an integral: \(\frac{\partial C(f(t))}{\partial t}=\int\frac{\partial C(f(t))}{\partial f(t)(x)}\frac{\partial f(t)(x)}{\partial t}dx\)</p>
+
+<p>So far, we ignored the data. When computing the cost, $C$ is not dependent on $f$ as a whole, but only dependent the outputs of $f$ where there are data points, e.g. $f(x_{i})$. Therefore, the above equation is equivalent to integrating over the data distribution $P(x)$, a sum of Dirac measures.</p>
+
+<p>\(\frac{\partial C(f(t))}{\partial t}=\int\frac{\partial C(f(t))}{\partial f(t)(x)}\frac{\partial f(t)(x)}{\partial t}dP(x)\) There is one more correction to make on this derivative. $f(t)(x)$ is in $\mathbb{R}^{m}$, so with $i$ indexing the output channel, we finally have the correct form:</p>
+
+<p>\(\frac{\partial C(f(t))}{\partial t}=\int\sum_{i}^{m}\frac{\partial C(f(t))}{\partial f_{i}(t)(x)}\frac{\partial f_{i}(t)(x)}{\partial t}dP(x)\) Here we introduce a coordinate vector, i.e. an array of scalars, $d\vert_{f(t)}(x)$, whose $i^{th}$ element is $\frac{\partial C(f(t))}{\partial f_{i}(t)(x)}$. Also, we introduce a coordinate vector $\partial_{t}f(t)(x)$ whose element is $\frac{\partial f_{i}(t)(x)}{\partial t}$. From this construction, we see that $d\vert_{f(t)}$ and $\partial_{t}f(t)$ are functions ($d\vert_{f(t)}:\mathbb{R}^{d}\rightarrow\mathbb{R}^{m}$; $\partial_{t}f(t):\mathbb{R}^{d}\rightarrow\mathbb{R}^{m}$) in $\mathcal{F}$. So we can rewrite the derivative as:</p>
+
+<p>\(\frac{\partial C(f(t))}{\partial t}=\mathbb{E}_{x\sim P(x)}\left[d\vert_{f(t)}(x)^{\top}\partial_{t}f(t)(x)\right]\) Finally, we introduce a new notation \(\langle f,g\rangle_{P(x)}=\mathbb{E}_{x\sim P(x)}\left[f(x)^{\top}g(x)\right]\) which defines a seminorm $|\cdot|<em>{P(x)}$ in $\mathcal{F}$. Rewriting $\frac{\partial C(f(t))}{\partial t}$ as $\partial</em>{t}C\vert_{f(t)}$, the final form is</p>
+
+<p>\(\partial_{t}C\vert_{f(t)}=\left\langle d\vert_{f(t)},\partial_{t}f(t)\right\rangle _{P(x)}\) We haven’t yet discussed how exactly the cost value will evolve. We want it go down the steepest direction of the cost landscape. For that, we inspect the dynamics of $f(t)$ that guarantees the gradient descent.</p>
+
+\[\theta(t+\eta)=\theta(t)-\eta\partial_{\theta}(C\circ F)(\theta(t))\]
+
+<p>\(\frac{\theta(t+\eta)-\theta(t)}{\eta}=-\partial_{\theta}(C\circ F)(\theta(t))\) In the $\eta\rightarrow0$ limit, we have continuous dynamics for the each parameter $\theta$ (scalar).</p>
+
+\[\partial_{t}\theta(t)=-\partial_{\theta}(C\circ F)(\theta(t))\]
+
+\[\partial_{\theta}(C\circ F)(\theta(t))=\frac{\partial C(F(\theta))}{\partial\theta}=\int\sum_{i}\frac{\partial C(F(\theta))}{\partial F(\theta)_{i}(x)}\frac{\partial F(\theta)_{i}(x)}{\partial\theta}dP(x)\]
+
+\[\frac{\partial C(f_{\theta(t)})}{\partial\theta}=\int\sum_{i}\frac{\partial C(f_{\theta(t)})}{\partial f_{\theta(t),i}(x)}\frac{\partial f_{\theta(t),i}(x)}{\partial\theta}dP(x)\]
+
+<p>\(\partial_{\theta}C\vert_{f_{\theta(t)}}=\left\langle d\vert_{f_{\theta(t)}},\partial_{\theta}f_{\theta(t)}\right\rangle _{P(x)}\) Therefore,</p>
+
+<p>\(\partial_{t}\theta(t)=-\left\langle d\vert_{f_{\theta(t)}},\partial_{\theta}f_{\theta(t)}\right\rangle _{P(x)}\) How does $f$ evolve?</p>
+
+\[\frac{\partial f_{\theta(t)}}{\partial t}=\sum_{j=1}^{N}\frac{\partial f_{\theta(t)}}{\partial\theta_{j}(t)}\frac{\partial\theta_{j}(t)}{\partial t}\]
+
+\[\partial_{t}f_{\theta(t)}=\sum_{j=1}^{N}\partial_{\theta_{j}}f_{\theta(t)}\partial_{t}\theta_{j}(t)\]
+
+\[=-\sum_{j=1}^{N}\partial_{\theta_{j}}f_{\theta(t)}\left\langle d\vert_{f_{\theta(t)}},\partial_{\theta_{j}}f_{\theta(t)}\right\rangle _{P(x)}\]
+
+<p>Assuming sample distribution (sum of deltas) for $P(x)$,</p>
+
+\[=-\sum_{j=1}^{N}\partial_{\theta_{j}}f_{\theta(t)}\frac{1}{P}\sum_{k=1}^{P}d\vert_{f_{\theta(t)}}(x_{k})^{\top}\partial_{\theta_{j}}f_{\theta(t)}(x_{k})\]
+
+<p>\(=-\frac{1}{P}\sum_{k=1}^{P}\sum_{j=1}^{N}\left(\partial_{\theta_{j}}f_{\theta(t)}\right)\left[\partial_{\theta_{j}}f_{\theta(t)}(x_{k})\right]^{\top}\left[d\vert_{f_{\theta(t)}}(x_{k})\right]\) Now re-express $\sum_{j=1}^{N}\left(\partial_{\theta_{j}}f_{\theta(t)}\right)\left[\partial_{\theta_{j}}f_{\theta(t)}(x_{k})\right]^{\top}$</p>
+
+<p>\(\sum_{j=1}^{N}\left(\partial_{\theta_{j}}f_{\theta(t)}\right)\left[\partial_{\theta_{j}}f_{\theta(t)}(x_{k})\right]^{\top}=\sum_{j=1}^{N}\left(\partial_{\theta_{j}}f_{\theta(t)}\otimes\partial_{\theta_{j}}f_{\theta(t)}\right)\left(\cdot,x_{k}\right)\) with a different notation,</p>
+
+\[=\sum_{j=1}^{N}\left(\partial_{\theta_{j}}F(\theta)\otimes\partial_{\theta_{j}}F(\theta)\right)\left(\cdot,x_{k}\right)\]
+
+<p>\(=K\left(\cdot,x_{k}\right)\) where $K$ is a tensor product, which is called tangent kernel:</p>
+
+<p>\(K=\sum_{j=1}^{N}\left(\partial_{\theta_{j}}F(\theta)\otimes\partial_{\theta_{j}}F(\theta)\right)\) Going back to the expression for the function dynamics, we have</p>
+
+<p>\(\partial_{t}f_{\theta(t)}=-\frac{1}{P}\sum_{k=1}^{P}K\left(\cdot,x_{k}\right)d\vert_{f_{\theta(t)}}(x_{k})\) In the paper, they call $\frac{1}{P}\sum_{k=1}^{P}K\left(\cdot,x_{k}\right)d\vert_{f_{\theta(t)}}(x_{k})$ a kernel gradient $\nabla_{K}C\in\mathcal{F}$</p>
+
+<p>\(\nabla_{K}C\vert_{f_{\theta(t)}}=\frac{1}{P}\sum_{k=1}^{P}K\left(\cdot,x_{k}\right)d\vert_{f_{\theta(t)}}(x_{k})\) So they write the dynamics as,</p>
+
+<p>\(\partial_{t}f_{\theta(t)}=-\nabla_{K}C\vert_{f_{\theta(t)}}\) Now let’s revisit the dynamics of the cost value in $\mathbb{R}$.</p>
+
+\[\partial_{t}C\vert_{f(t)}=\left\langle d\vert_{f(t)},\partial_{t}f(t)\right\rangle _{P(x)}\]
+
+\[=\frac{1}{P}\sum_{i=1}^{P}d\vert_{f(t)}(x_{i})^{\top}\partial_{t}f(t)(x_{i})\]
+
+\[=\frac{1}{P}\sum_{i=1}^{P}d\vert_{f(t)}(x_{i})^{\top}\left[-\frac{1}{P}\sum_{k=1}^{P}K\left(x_{i},x_{k}\right)d\vert_{f(t)}(x_{k})\right]\]
+
+<p>\(=-\frac{1}{P^{2}}\sum_{k=1}^{P}\sum_{i=1}^{P}d\vert_{f(t)}(x_{i})^{\top}K\left(x_{i},x_{k}\right)d\vert_{f(t)}(x_{k})\) Here, we introduce another notation.</p>
+
+<p>\(\langle f,g\rangle_{K}=\mathbb{E}_{x,x'\sim P(x)}\left[f(x)^{\top}K\left(x,x'\right)g(x')\right]\) and define $|f|<em>{K}^{2}=\langle f,f\rangle</em>{K}$. Remembering that we deal with a sample distribution,</p>
+
+<p>\(\partial_{t}C\vert_{f(t)}=-\|d\vert_{f(t)}\|_{K}^{2}\) Also remember that $K$ is currently dependent on $\theta$, and since $\theta$ changes over time, $K$ is also dependent on time.</p>
+
+<h1 id="neural-tangent-kernel">Neural Tangent Kernel</h1>
+
+<p>All we need to do is compute $K=\sum_{j=1}^{N}\left(\partial_{\theta_{j}}F(\theta)\otimes\partial_{\theta_{j}}F(\theta)\right)$. More concretely,</p>
+
+\[K(x,x')=\sum_{j=1}^{N}\left[\partial_{\theta_{j}}f_{\theta(t)}(x)\right]\left[\partial_{\theta_{j}}f_{\theta(t)}(x')\right]^{\top}\]
+
+<p>\(K_{kk'}(x,x')=\sum_{j=1}^{N}\left[\partial_{\theta_{j}}f_{\theta(t)}(x)\right]_{k}\left[\partial_{\theta_{j}}f_{\theta(t)}(x')\right]_{k'}\) where $\left[\cdot\right]_{k}$ denotes the $k^{th}$ channel of the output. Start with the simplest model $L=1$ (input layer and output layer, no nonlinearity).</p>
+
+<p>\(f_{\theta}(x)=\frac{1}{\sqrt{n_{0}}}W^{(0)}x+\beta b^{(0)}\) Now realize what the summand of $K_{kk’}^{(1)}(x,x’)$ should be for this model.</p>
+
+<p>\(K_{kk'}^{(1)}(x,x')=\sum_{i=1}^{n_{0}}\sum_{j=1}^{n_{1}}\left[\partial_{W_{ji}^{(0)}}f_{\theta}(x)\right]_{k}\left[\partial_{W_{ji}^{(0)}}f_{\theta}(x')\right]_{k'}+\sum_{j=1}^{n_{1}}\left[\partial_{b_{j}^{(0)}}f_{\theta}(x)\right]_{k}\left[\partial_{b_{j}^{(0)}}f_{\theta}(x')\right]_{k'}\) Note that $\left[\partial_{W_{ji}^{(0)}}f_{\theta}(x)\right]<em>{k}$ is $0$ if $j\neq k$, i.e. there is no change in the output of the $k^{th}$ channel of $f</em>{\theta}(x)$ when there is a change in $W_{ji}$ for $j\neq k$. Therefore,</p>
+
+\[K_{kk'}^{(1)}(x,x')=\sum_{i=1}^{n_{0}}\sum_{j=1}^{n_{1}}\left(\partial_{W_{ji}^{(0)}}f_{\theta}(x)\right)\left(\partial_{W_{ji}^{(0)}}f_{\theta}(x')\right)\delta_{jk}\delta_{jk'}+\sum_{j=1}^{n_{1}}\left(\partial_{b_{j}^{(0)}}f_{\theta}(x)\right)\left(\partial_{b_{j}^{(0)}}f_{\theta}(x')\right)\delta_{jk}\delta_{jk'}\]
+
+<p>Since</p>
+
+\[\partial_{W_{ji}^{(0)}}f_{\theta}(x)=\frac{1}{\sqrt{n_{0}}}x_{i}\]
+
+<p>\(\partial_{b_{j}^{(0)}}f_{\theta}(x)=\beta\) , the kernel is</p>
+
+\[K_{kk'}^{(1)}(x,x')=\frac{1}{n_{0}}\sum_{i=1}^{n_{0}}\sum_{j=1}^{n_{1}}x_{i}x'_{i}\delta_{jk}\delta_{jk'}+\beta^{2}\sum_{j=1}^{n_{1}}\delta_{jk}\delta_{jk'}\]
+
+\[K_{kk'}^{(1)}(x,x')=\frac{1}{n_{0}}x^{\top}x'\delta_{kk'}+\beta^{2}\delta_{kk'}\]
+
+\[=\left(\frac{1}{n_{0}}x^{\top}x'+\beta^{2}\right)\delta_{kk'}\]
+
+<p>\(=\Sigma^{(1)}(x,x')\delta_{kk'}\) . Next, we generalize this to deeper layers. We will see how $K^{(L+1)}(x,x’)$ is a function of $K^{(L)}(x,x’)$, and this relationship allows us to compute a tangent kernel for an arbitrary deep network.</p>
+
+<p>\(K_{kk'}^{(L+1)}(x,x')=\sum_{j=1}^{\widetilde{N}}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x)\right]_{k}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x')\right]_{k'}+\sum_{l=1}^{\hat{N}}\left[\partial_{\hat{\theta}_{l}}f_{\theta}(x)\right]_{k}\left[\partial_{\hat{\theta}_{l}}f_{\theta}(x')\right]_{k'}\) For the similar reason as in $L=1$, $\sum_{l=1}^{\hat{N}}\left[\partial_{\hat{\theta}<em>{l}}f</em>{\theta}(x)\right]<em>{k}\left[\partial</em>{\hat{\theta}<em>{l}}f</em>{\theta}(x’)\right]<em>{k’}=\Sigma^{(L+1)}(x,x’)\delta</em>{kk’}$. Let’s dissect $\partial_{\widetilde{\theta}<em>{j}}f</em>{\theta}(x)$, where $f_{\theta}^{(L+1)}(x)=\frac{1}{\sqrt{n_{L}}}W^{(L)}\alpha_{\widetilde{\theta}}^{(L)}(x)+\beta b^{(L)}$</p>
+
+\[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x)=\partial_{\widetilde{\theta}_{j}}\left(\frac{1}{\sqrt{n_{L}}}W^{(L)}\alpha_{\widetilde{\theta}}^{(L)}(x)+\beta b^{(L)}\right)\]
+
+<p>\(=\frac{1}{\sqrt{n_{L}}}W^{(L)}\left(\partial_{\widetilde{\theta}_{j}}\alpha_{\widetilde{\theta}}^{(L)}(x)\right)\) $\partial_{\widetilde{\theta}<em>{j}}\alpha^{(L)}(x)\in\mathbb{R}^{n</em>{L}}$.</p>
+
+<p>\(\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x)\right]_{k}=\frac{1}{\sqrt{n_{L}}}\sum_{i=1}^{n_{L}}W_{ki}^{(L)}\left[\partial_{\widetilde{\theta}_{j}}\alpha_{\widetilde{\theta}}^{(L)}(x)\right]_{i}\) Note that $\left[\partial_{\widetilde{\theta}<em>{j}}\alpha^{(L)}(x)\right]</em>{i}=\left[\partial_{\widetilde{\theta}<em>{j}}\tilde{\alpha}^{(L)}(x)\right]</em>{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}^{(L)}(x)\right)}}\right]_{i}$.</p>
+
+<p>\(\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x)\right]_{k}=\sum_{i=1}^{n_{L}}\frac{1}{\sqrt{n_{L}}}W_{ki}^{(L)}\left[\partial_{\widetilde{\theta}_{j}}\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}\) So the first summation is</p>
+
+<p>\(\sum_{j=1}^{\widetilde{N}}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x)\right]_{k}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x')\right]_{k'}=\frac{1}{n_{L}}\sum_{i,i'=1}^{n_{L}}\left\{ \sum_{j=1}^{\widetilde{N}}\left[\partial_{\widetilde{\theta}_{j}}\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right]_{i}\left[\partial_{\widetilde{\theta}_{j}}\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right]_{i'}\right\} \left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]_{i'}W_{ki}^{(L)}W_{k'i'}^{(L)}\) Note that $\sum_{j=1}^{\widetilde{N}}\left[\partial_{\widetilde{\theta}<em>{j}}\tilde{\alpha}^{(L)}(x)\right]</em>{i}\left[\partial_{\widetilde{\theta}<em>{j}}\tilde{\alpha}^{(L)}(x)\right]</em>{i’}=K_{ii’}^{(L)}(x,x’)$.</p>
+
+<p>\(\sum_{j=1}^{\widetilde{N}}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x)\right]_{k}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x')\right]_{k'}=\frac{1}{n_{L}}\sum_{i,i'=1}^{n_{L}}\left(K_{ii'}^{(L)}(x,x')\right)\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]_{i'}W_{ki}^{(L)}W_{k'i'}^{(L)}\) Therefore,</p>
+
+<p>\(K_{kk'}^{(L+1)}(x,x')=\frac{1}{n_{L}}\sum_{i,i'=1}^{n_{L}}\left(K_{ii'}^{(L)}(x,x')\right)\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]_{i'}W_{ki}^{(L)}W_{k'i'}^{(L)}+\Sigma^{(L+1)}(x,x')\delta_{kk'}\) To simplify further, we need to take $n_{L}\rightarrow\infty$. First, $K_{ii’}^{(L)}(x,x’)$ simplifies (Proposition 1). \(K_{ii'}^{(L)}(x,x')\xrightarrow{n_{l}\rightarrow\infty\forall l}K_{\infty}^{(L)}(x,x')\delta_{ii'}\) Detailed proof is required to show we need to sequentially expand the widths from the first hidden layer to the next and so on. We prove Proposition 1 by showing that the summation term in the above $K_{kk’}^{(L+1)}(x,x’)$ equation has the $\delta_{kk’}$ factor when $n_{l}\rightarrow\infty\quad\forall l\leq L$. We don’t need to worry about the second term, since it already has $\delta_{kk’}$. When $n_{l}\rightarrow\infty\quad\forall l\leq L$, the summation becomes expectation over the randomness in the network induced by the random weights and biases.</p>
+
+\[\sum_{j=1}^{\widetilde{N}}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x)\right]_{k}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x')\right]_{k'}\xrightarrow{n_{l}\rightarrow\infty\forall l}\mathbb{E}_{\widetilde{\theta}\sim P(\theta)}\left[\left(K_{ii'}^{(L)}(x,x')\right)\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]_{i'}W_{ki}^{(L)}W_{k'i'}^{(L)}\right]\]
+
+<p>\(=\mathbb{E}_{\widetilde{\theta}\sim P(\theta)}\left[\left(K_{ii'}^{(L)}(x,x')\right)\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]_{i'}\right]\mathbb{E}_{\widetilde{\theta}\sim P(\theta)}\left[W_{ki}^{(L)}W_{k'i'}^{(L)}\right]\) The decomposition of the expectation in the second equality is due to the independence between the randomness of $W^{(L)}$ and the randomness of $\tilde{\alpha}<em>{\widetilde{\theta}}^{(L)}(x)$. It is evident that $\mathbb{E}</em>{\widetilde{\theta}\sim P(\theta)}\left[W_{ki}^{(L)}W_{k’i’}^{(L)}\right]=\delta_{kk’}\delta_{ii’}$. Therefore, at the large width limit,</p>
+
+<p>\(K_{kk'}^{(L+1)}(x,x')=\frac{1}{n_{L}}\sum_{i=1}^{n_{L}}\left(K_{ii}^{(L)}(x,x')\right)\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]_{i}\delta_{kk'}+\Sigma^{(L+1)}(x,x')\delta_{kk'}\) Due to symmetry of all neurons at the large width limit, the summation becomes an average over $i$’s.</p>
+
+<p>\(K_{kk'}^{(L+1)}(x,x')=\mathbb{E}_{\tilde{\alpha}_{\widetilde{\theta}}^{(L)}\sim\mathcal{GP}}\left[\left(K_{ii}^{(L)}(x,x')\right)\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]\delta_{kk'}+\Sigma^{(L+1)}(x,x')\delta_{kk'}\) This shows that $K_{kk’}^{(L+1)}(x,x’)$ concentrates as $n_{L}\rightarrow\infty$. Here it is important to note that we take $n_{l}\rightarrow\infty\quad\forall l\leq L-1$ before $n_{L}\rightarrow\infty$, i.e. before the above averaging $\mathbb{E}<em>{i}[\cdot]$ appears. That is because, by taking $n</em>{L-1}\rightarrow\infty$ first, we concentrate $K_{ii}^{(L)}(x,x’)$ to $K_{\infty}^{(L)}(x,x’)$, such that we have $K_{\infty}^{(L)}(x,x’)$ outside the above $\mathbb{E}<em>{i}[\cdot]$ when we take $n</em>{L}\rightarrow\infty$. Following through with this order of expansion, we have</p>
+
+\[K_{kk'}^{(L+1)}(x,x')=K_{\infty}^{(L)}(x,x')\mathbb{E}_{i}\left[\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]_{i}\right]\delta_{kk'}+\Sigma^{(L+1)}(x,x')\delta_{kk'}\]
+
+<p>Introducing new notation $\dot{\Sigma}^{(L+1)}=\mathbb{E}<em>{\tilde{\alpha}</em>{\widetilde{\theta}}^{(L)}\sim\mathcal{GP}}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}<em>{\widetilde{\theta}}^{(L)}(x)\right)}}\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}</em>{\widetilde{\theta}}^{(L)}(x’)\right)}}\right]$ , we have</p>
+
+\[K_{kk'}^{(L+1)}(x,x')=\left(K_{\infty}^{(L)}(x,x')\dot{\Sigma}^{(L+1)}+\Sigma^{(L+1)}(x,x')\right)\delta_{kk'}\]
+
+<p>\(K_{\infty}^{(L+1)}(x,x')=K_{\infty}^{(L)}(x,x')\dot{\Sigma}^{(L+1)}+\Sigma^{(L+1)}(x,x')\) To summarize,</p>
+
+\[K_{\infty}^{(1)}(x,x')=\Sigma^{(1)}(x,x')\]
+
+\[K_{\infty}^{(L+1)}(x,x')=K_{\infty}^{(L)}(x,x')\dot{\Sigma}^{(L+1)}+\Sigma^{(L+1)}(x,x')\]
+
+  </div><a class="u-url" href="/2023/04/14/NTK.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="http://localhost:4000/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+        <ul class="contact-list">
+          <li class="p-name">Chanwoo Chun</li>
+          <li><a class="u-email" href="mailto:cc2465@cornell.edu">cc2465@cornell.edu</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <p>NA
+</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
+

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Abstraction | Chanwoo’s notes</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="Abstraction" />
+<meta name="author" content="Chanwoo Chun" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Introduction (a short rant) I study machine learning and this blog, like many other PhD students’ blogs, covers topics in machine learning. No machine learning scientists need to know abstract algebra concepts in order to perform research. However, it is hard to read serious (theoretical) machine learning literature without understanding the terminologies used in them. This has been my rate-limiting step which I eager to improve." />
+<meta property="og:description" content="Introduction (a short rant) I study machine learning and this blog, like many other PhD students’ blogs, covers topics in machine learning. No machine learning scientists need to know abstract algebra concepts in order to perform research. However, it is hard to read serious (theoretical) machine learning literature without understanding the terminologies used in them. This has been my rate-limiting step which I eager to improve." />
+<link rel="canonical" href="http://localhost:4000/2023/04/17/Abstract-math-copy.html" />
+<meta property="og:url" content="http://localhost:4000/2023/04/17/Abstract-math-copy.html" />
+<meta property="og:site_name" content="Chanwoo’s notes" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-04-17T00:00:00-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Abstraction" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Chanwoo Chun"},"dateModified":"2023-04-17T00:00:00-04:00","datePublished":"2023-04-17T00:00:00-04:00","description":"Introduction (a short rant) I study machine learning and this blog, like many other PhD students’ blogs, covers topics in machine learning. No machine learning scientists need to know abstract algebra concepts in order to perform research. However, it is hard to read serious (theoretical) machine learning literature without understanding the terminologies used in them. This has been my rate-limiting step which I eager to improve.","headline":"Abstraction","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2023/04/17/Abstract-math-copy.html"},"url":"http://localhost:4000/2023/04/17/Abstract-math-copy.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Chanwoo&apos;s notes" />
+<script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        tags: 'ams'
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+    </script>
+
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Chanwoo&#39;s notes</a></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Abstraction</h1>
+    <p class="post-meta"><time class="dt-published" datetime="2023-04-17T00:00:00-04:00" itemprop="datePublished">
+        Apr 17, 2023
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <h2 id="introduction-a-short-rant">Introduction (a short rant)</h2>
+<p>I study machine learning and this blog, like many other PhD students’ blogs, covers topics in machine learning. No machine learning scientists need to know abstract algebra concepts in order to perform research. However, it is hard to read serious (theoretical) machine learning literature without understanding the terminologies used in them. This has been my rate-limiting step which I eager to improve.</p>
+
+<p>This post is for you if you are also frustrated by phrases such as “$V$ is a vector space equipped with inner product” or scared whenever the word “tensor product” comes up, since you do not think you fully grasped what a tensor really is, and you only heard someone say “it is just a generalization of a matrix” (which is in fact kind of wrong; but it doesn’t matter in practice). I personally was puzzled by the “equipped with inner product” phrase, since it is like saying a Lego set comes with: 1. the bricks and 2. your ability to click these bricks together. If you give me bricks, I should be able to click them together no matter what. It doesn’t make sense my ability to click is attached to the Lego set. If you give me vectors, I should be able to take inner product no matter what. Why do they attach my ability to take inner product to the definition of certain vector spaces but not all vector spaces? I ask this question to people who are comfortable with abstract algebra, and they all reply “that is just the way it is”, and that makes it sound even more mysterious.</p>
+
+<p>It all has to do with neuroplasticity of our math brain (whatever that subcircuit is in our cortex) and college curriculum. After taking Gilbert Strang’s “Linear Algebra”, your brain becomes an expert in handling array of numbers. If your brain is plastic enough, taking abstract algebra course will help you generalize the array of numbers to some abstractions. Unfortunately, if you never took abstract algebra and have thought of vectors as array of numbers for a decade, your brain has solidified around that notion. For our unfortunate souls, I aim to provide a sledge hammer to beak us free from that mind-jail and allow ourselves to read advanced papers like we eat breakfast. This is a blog post equipped with your ability to learn abtract math!</p>
+
+<h2 id="goal-1-vector-space-equipped-with-inner-product">Goal 1: “Vector space equipped with inner product”</h2>
+<p>Let’s understand what this means. We first need to free ourselves from vector = array of numbers mindset.</p>
+
+<p>Vector space is comprised of two things: vectors drawn from a set $V$, and scalars drawn from a field $k$. We will define vector by showing how it interact with each other and scalars. However, we need to first know what “scalar” and “field” really means.</p>
+
+<h3 id="field">Field</h3>
+
+<p>I know you are thinking about $\mathbb{R}$ (real numbers) and $\mathbb{C}$ (complex numbers). Pretend like you don’t know that. But pretending you don’t know something you already know is very difficult. That is a skill that you need for abstraction.</p>
+
+<p>Field is defined by axioms that dictates how its elements interact with each other. (modified from Dr. Victor’s note:)</p>
+
+<ol>
+  <li>
+    <p>A field is a set of elements $\alpha, \beta, \ldots$ along with two operations, $\spadesuit$ and $\diamondsuit$.</p>
+  </li>
+  <li>
+    <p>For the operation $\spadesuit$, the elements form a commutative group. The identity is denoted by $e_\spadesuit$. The inverse of $\alpha$ is denoted $\alpha_\spadesuit$.</p>
+  </li>
+  <li>
+    <p>For the operation $\diamondsuit$, the elements other than $e_\spadesuit$ form a commutatitve group, and the identity is denoted by $e_\diamondsuit$. The inverse of $\alpha$ is denoted $\alpha_\diamondsuit$. (pg.12 error)</p>
+  </li>
+  <li>
+    <p>The operations $\spadesuit$ and $\diamondsuit$ are linked by the distributive law, $\alpha \diamondsuit (\beta \spadesuit \gamma) = \alpha \diamondsuit \beta \spadesuit \alpha \diamondsuit \gamma$. But note that 
+$\alpha \spadesuit (\beta \diamondsuit \gamma) \neq \alpha \spadesuit \beta \diamondsuit \alpha \spadesuit \gamma$.</p>
+  </li>
+  <li>
+    <p>Fields can be finite or infinite</p>
+  </li>
+</ol>
+
+<p>This may look completely arbitrary, but everything makes sense when you realize $\spadesuit$ is what is commonly known is $+$ and $\diamondsuit$ is $\cdot$. But resist that temptation for now.</p>
+
+<p>It seems arbitrary that in 3., we are omitting $e_\spadesuit$. It is there because, apparently, $\alpha \diamondsuit e_\spadesuit = e_\spadesuit$. This means that $e_\spadesuit$ does not have inverse, since if it does exists (and denote it $e_{\spadesuit\diamondsuit}$) and assign it to $\alpha$, then we have $e_{\spadesuit\diamondsuit} \diamondsuit e_\spadesuit = e_\spadesuit$. However, the right hand side (RHS) should not be $e_\spadesuit$, but instead $e_\diamondsuit$. Now the question is, why did I assume that this is true: $\alpha \diamondsuit e_\spadesuit = e_\spadesuit$? Interestingly, this can be proved with the axioms provided above (for now, I refer to <a href="&quot;https://www.quora.com/How-we-can-prove-0-x-x-0-0-by-only-real-field-axioms&quot;">here</a> for the proof).</p>
+
+<details>
+    <summary>Questions that I have. Click to expand</summary>
+    As of writing this, I am wondering how to show the order of operations given the field axioms... Also, how were these axioms constructed? It feels arbitrary, except for the fact that it perfectly explains the real numbers (and complex numberes) with addition and multiplication. Is it really useful to think of  it as something more general? What if we change the axioms and come up with different versions of field? I feel like this is a rabbit hole I should jump over... Ah the temptation to jump in though! But the time is finite.
+</details>
+
+<h3 id="vector-space">Vector space</h3>
+<p>The idea of vector being an array of number and scalar being a real number is burned-in to my brain. I will use different names: omnis (Latin for “everything”, plural: omnes) and pondus (Latin for “weight”, plural: pondera).</p>
+
+<p>Omnis space (vector space) have two kinds of mathematical objects: omnes ($o,p,\ldots$) drawn from a set $O$, and pondera ($\alpha,\beta,\ldots$) form a field $K$.</p>
+
+<p>The field of pondus has operations $\spadesuit$ and $\diamondsuit$, the same notations used above.</p>
+
+<p>The omnes form a communtative group under operation $\clubsuit$. The inverse of $o$ is $o_\clubsuit$.</p>
+
+<p>There is a special operation called $\heartsuit: O\times K \rightarrow O$. If $o \in O$ and $\alpha \in K$, then $o \heartsuit \alpha \in O$. It obeys two kinds of distributive laws:</p>
+
+<ol>
+  <li>$\alpha \heartsuit (o \clubsuit p) = \alpha \heartsuit o \clubsuit \alpha \heartsuit p$</li>
+  <li>$(\alpha \spadesuit \beta) \heartsuit o = \alpha \heartsuit o \clubsuit \beta \heartsuit o$</li>
+</ol>
+
+<p>Note that the RHS of 2. has $\clubsuit$ instead of $\spadesuit$!
+Due to 2., $e_\spadesuit \heartsuit o$ is the identity for $\clubsuit$: $\alpha \heartsuit o = (\alpha \spadesuit e_\spadesuit)\heartsuit o = \alpha \heartsuit o \clubsuit e_\spadesuit \heartsuit o = (\alpha \heartsuit o) \clubsuit (e_\spadesuit \heartsuit o)$.
+Now what is an inverse of $\alpha \heartsuit o$ under $\clubsuit$ (denoted <span>$( \alpha \heartsuit o)_\clubsuit $</span>)? <span>$e_\spadesuit \heartsuit o = (\alpha \spadesuit \alpha_\spadesuit) \heartsuit o = (\alpha \heartsuit o) \clubsuit (\alpha_\spadesuit \heartsuit o)$</span>. Hence <span>$( \alpha \heartsuit o)_\clubsuit $</span> <span>$=\alpha_\spadesuit \heartsuit o$.</span></p>
+
+<p>There is also some sort of associative law that relates $\diamondsuit$ and $\heartsuit$, namely,  $(\alpha \diamondsuit \beta) \heartsuit o = \alpha \heartsuit (\beta \heartsuit o) $. Due to this, $e_\diamondsuit \heartsuit o = o$. In other words, $e_\diamondsuit$ ($=e_\heartsuit$) is an identity for $\heartsuit$. Why? $e_\diamondsuit \heartsuit ((e_\diamondsuit \heartsuit o) \clubsuit o_\clubsuit)  = (e_\diamondsuit \heartsuit (e_\diamondsuit \heartsuit o)) \clubsuit (e_\diamondsuit \heartsuit o_\clubsuit) = (e_\diamondsuit \heartsuit o) \clubsuit (e_\diamondsuit \heartsuit o_\clubsuit) = e_\diamondsuit\heartsuit(o \clubsuit o_\clubsuit)$
+Now look at the left-most side and right-most side of the chain of equalities. The paranthesis that contains $e_\diamondsuit \heartsuit o$ in the left-most side must equal $o$ in the right-most side. Therefore, $e_\diamondsuit \heartsuit o = o$. But I haven’t shown that this equality is unique. Anyways, this is not that important for getting to our goal.</p>
+
+<p>So these mathematical objects, omnis and pondus, are defined by their actions. We can further define what they are, by introducing additional actions. We will say that a new action introduces new quantity in the omnis space that satisfies the triangle inequality. We could call it “pressure” or “velocity”, or “momentum”, but “length” is the simplest concept that satisfies triangle inequality, so we will use “length”.</p>
+
+<h2 id="appendix-group-theory">Appendix: Group theory</h2>
+
+<h3 id="homomorphism">Homomorphism</h3>
+
+<ol>
+  <li>Onto homomorphism</li>
+  <li>Isomorphism</li>
+  <li>Automorphism</li>
+</ol>
+
+<h3 id="kernel">Kernel</h3>
+
+  </div><a class="u-url" href="/2023/04/17/Abstract-math-copy.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="http://localhost:4000/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+        <ul class="contact-list">
+          <li class="p-name">Chanwoo Chun</li>
+          <li><a class="u-email" href="mailto:cc2465@cornell.edu">cc2465@cornell.edu</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <p>NA
+</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
+
