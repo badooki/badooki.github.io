@@ -14,130 +14,133 @@ The result reviewed here is quite general and not limited to neural network mode
 
 We want to know how the cost value $C(f(t))$ evolves over time. For that, we take derivative of $C(f(t))$. Start with an incorrect chain rule:
 
-$$\frac{\partial C(f(t))}{\partial t}=\frac{\partial C(f(t))}{\partial f(t)}\frac{\partial f(t)}{\partial t}$$ The above is incorrect since I treated $f(t)$ like a scalar, when it is in fact, a function. If $f(t)$ is a vector, then we would sum the chain over its elements, i.e. $\sum_{i}\frac{\partial C(f(t))}{\partial f(t)_{i}}\frac{\partial f(t)_{i}}{\partial t}$. Here, we generalize this to the function $f(t)$ by treating a function as an infinite dimensional vector, which gives us an integral: $$\frac{\partial C(f(t))}{\partial t}=\int\frac{\partial C(f(t))}{\partial f(t)(x)}\frac{\partial f(t)(x)}{\partial t}dx$$
+$$\frac{\partial C(f(t))}{\partial t}=\frac{\partial C(f(t))}{\partial f(t)}\frac{\partial f(t)}{\partial t}$$ The above is incorrect since I treated $f(t)$ like a scalar, when it is in fact, a function. If $f(t)$ is a vector, then we would sum the chain over its elements, i.e. $\sum\_{i}\frac{\partial C(f(t))}{\partial f(t)\_{i}}\frac{\partial f(t)\_{i}}{\partial t}$. Here, we generalize this to the function $f(t)$ by treating a function as an infinite dimensional vector, which gives us an integral: $$\frac{\partial C(f(t))}{\partial t}=\int\frac{\partial C(f(t))}{\partial f(t)(x)}\frac{\partial f(t)(x)}{\partial t}dx$$
 
-So far, we ignored the data. When computing the cost, $C$ is not dependent on $f$ as a whole, but only dependent the outputs of $f$ where there are data points, e.g. $f(x_{i})$. Therefore, the above equation is equivalent to integrating over the data distribution $P(x)$, a sum of Dirac measures.
+$\sum\_{i}\frac{\partial C(f(t))}{\partial f(t)\_{i}} \frac{\partial f(t)\_{i}}{\partial t}$
+
+So far, we ignored the data. When computing the cost, $C$ is not dependent on $f$ as a whole, but only dependent the outputs of $f$ where there are data points, e.g. $f(x\_{i})$. Therefore, the above equation is equivalent to integrating over the data distribution $P(x)$, a sum of Dirac measures.
 
 $$\frac{\partial C(f(t))}{\partial t}=\int\frac{\partial C(f(t))}{\partial f(t)(x)}\frac{\partial f(t)(x)}{\partial t}dP(x)$$ There is one more correction to make on this derivative. $f(t)(x)$ is in $\mathbb{R}^{m}$, so with $i$ indexing the output channel, we finally have the correct form:
 
-$$\frac{\partial C(f(t))}{\partial t}=\int\sum_{i}^{m}\frac{\partial C(f(t))}{\partial f_{i}(t)(x)}\frac{\partial f_{i}(t)(x)}{\partial t}dP(x)$$ Here we introduce a coordinate vector, i.e. an array of scalars, $d\vert_{f(t)}(x)$, whose $i^{th}$ element is $\frac{\partial C(f(t))}{\partial f_{i}(t)(x)}$. Also, we introduce a coordinate vector $\partial_{t}f(t)(x)$ whose element is $\frac{\partial f_{i}(t)(x)}{\partial t}$. From this construction, we see that $d\vert_{f(t)}$ and $\partial_{t}f(t)$ are functions ($d\vert_{f(t)}:\mathbb{R}^{d}\rightarrow\mathbb{R}^{m}$; $\partial_{t}f(t):\mathbb{R}^{d}\rightarrow\mathbb{R}^{m}$) in $\mathcal{F}$. So we can rewrite the derivative as:
+$$\frac{\partial C(f(t))}{\partial t}=\int\sum\_{i}^{m}\frac{\partial C(f(t))}{\partial f\_{i}(t)(x)}\frac{\partial f\_{i}(t)(x)}{\partial t}dP(x)$$ Here we introduce a coordinate vector, i.e. an array of scalars, $d\vert\_{f(t)}(x)$, whose $i^{th}$ element is $\frac{\partial C(f(t))}{\partial f\_{i}(t)(x)}$. Also, we introduce a coordinate vector $\partial\_{t}f(t)(x)$ whose element is $\frac{\partial f\_{i}(t)(x)}{\partial t}$. From this construction, we see that $d\vert\_{f(t)}$ and $\partial\_{t}f(t)$ are functions ($d\vert\_{f(t)}:\mathbb{R}^{d}\rightarrow\mathbb{R}^{m}$; $\partial\_{t}f(t):\mathbb{R}^{d}\rightarrow\mathbb{R}^{m}$) in $\mathcal{F}$. So we can rewrite the derivative as:
 
-$$\frac{\partial C(f(t))}{\partial t}=\mathbb{E}_{x\sim P(x)}\left[d\vert_{f(t)}(x)^{\top}\partial_{t}f(t)(x)\right]$$ Finally, we introduce a new notation $$\langle f,g\rangle_{P(x)}=\mathbb{E}_{x\sim P(x)}\left[f(x)^{\top}g(x)\right]$$ which defines a seminorm $\|\cdot\|_{P(x)}$ in $\mathcal{F}$. Rewriting $\frac{\partial C(f(t))}{\partial t}$ as $\partial_{t}C\vert_{f(t)}$, the final form is
+$$\frac{\partial C(f(t))}{\partial t}=\mathbb{E}\_{x\sim P(x)}\left[d\vert\_{f(t)}(x)^{\top}\partial\_{t}f(t)(x)\right]$$ Finally, we introduce a new notation $$\langle f,g\rangle\_{P(x)}=\mathbb{E}\_{x\sim P(x)}\left[f(x)^{\top}g(x)\right]$$ which defines a seminorm $\|\cdot\|\_{P(x)}$ in $\mathcal{F}$. Rewriting $\frac{\partial C(f(t))}{\partial t}$ as $\partial\_{t}C\vert\_{f(t)}$, the final form is
 
-$$\partial_{t}C\vert_{f(t)}=\left\langle d\vert_{f(t)},\partial_{t}f(t)\right\rangle _{P(x)}$$ We haven't yet discussed how exactly the cost value will evolve. We want it go down the steepest direction of the cost landscape. For that, we inspect the dynamics of $f(t)$ that guarantees the gradient descent.
+$$\partial\_{t}C\vert\_{f(t)}=\left\langle d\vert\_{f(t)},\partial\_{t}f(t)\right\rangle \_{P(x)}$$ We haven't yet discussed how exactly the cost value will evolve. We want it go down the steepest direction of the cost landscape. For that, we inspect the dynamics of $f(t)$ that guarantees the gradient descent.
 
-$$\theta(t+\eta)=\theta(t)-\eta\partial_{\theta}(C\circ F)(\theta(t))$$
+$$\theta(t+\eta)=\theta(t)-\eta\partial\_{\theta}(C\circ F)(\theta(t))$$
 
-$$\frac{\theta(t+\eta)-\theta(t)}{\eta}=-\partial_{\theta}(C\circ F)(\theta(t))$$ In the $\eta\rightarrow0$ limit, we have continuous dynamics for the each parameter $\theta$ (scalar).
+$$\frac{\theta(t+\eta)-\theta(t)}{\eta}=-\partial\_{\theta}(C\circ F)(\theta(t))$$ In the $\eta\rightarrow0$ limit, we have continuous dynamics for the each parameter $\theta$ (scalar).
 
-$$\partial_{t}\theta(t)=-\partial_{\theta}(C\circ F)(\theta(t))$$
+$$\partial\_{t}\theta(t)=-\partial\_{\theta}(C\circ F)(\theta(t))$$
 
-$$\partial_{\theta}(C\circ F)(\theta(t))=\frac{\partial C(F(\theta))}{\partial\theta}=\int\sum_{i}\frac{\partial C(F(\theta))}{\partial F(\theta)_{i}(x)}\frac{\partial F(\theta)_{i}(x)}{\partial\theta}dP(x)$$
+$$\partial\_{\theta}(C\circ F)(\theta(t))=\frac{\partial C(F(\theta))}{\partial\theta}=\int\sum\_{i}\frac{\partial C(F(\theta))}{\partial F(\theta)\_{i}(x)}\frac{\partial F(\theta)\_{i}(x)}{\partial\theta}dP(x)$$
 
-$$\frac{\partial C(f_{\theta(t)})}{\partial\theta}=\int\sum_{i}\frac{\partial C(f_{\theta(t)})}{\partial f_{\theta(t),i}(x)}\frac{\partial f_{\theta(t),i}(x)}{\partial\theta}dP(x)$$
+$$\frac{\partial C(f\_{\theta(t)})}{\partial\theta}=\int\sum\_{i}\frac{\partial C(f\_{\theta(t)})}{\partial f\_{\theta(t),i}(x)}\frac{\partial f\_{\theta(t),i}(x)}{\partial\theta}dP(x)$$
 
-$$\partial_{\theta}C\vert_{f_{\theta(t)}}=\left\langle d\vert_{f_{\theta(t)}},\partial_{\theta}f_{\theta(t)}\right\rangle _{P(x)}$$ Therefore,
+$$\partial\_{\theta}C\vert\_{f\_{\theta(t)}}=\left\langle d\vert\_{f\_{\theta(t)}},\partial\_{\theta}f\_{\theta(t)}\right\rangle \_{P(x)}$$ Therefore,
 
-$$\partial_{t}\theta(t)=-\left\langle d\vert_{f_{\theta(t)}},\partial_{\theta}f_{\theta(t)}\right\rangle _{P(x)}$$ How does $f$ evolve?
+$$\partial\_{t}\theta(t)=-\left\langle d\vert\_{f\_{\theta(t)}},\partial\_{\theta}f\_{\theta(t)}\right\rangle \_{P(x)}$$ How does $f$ evolve?
 
-$$\frac{\partial f_{\theta(t)}}{\partial t}=\sum_{j=1}^{N}\frac{\partial f_{\theta(t)}}{\partial\theta_{j}(t)}\frac{\partial\theta_{j}(t)}{\partial t}$$
+$$\frac{\partial f\_{\theta(t)}}{\partial t}=\sum\_{j=1}^{N}\frac{\partial f\_{\theta(t)}}{\partial\theta\_{j}(t)}\frac{\partial\theta\_{j}(t)}{\partial t}$$
 
-$$\partial_{t}f_{\theta(t)}=\sum_{j=1}^{N}\partial_{\theta_{j}}f_{\theta(t)}\partial_{t}\theta_{j}(t)$$
+$$\partial\_{t}f\_{\theta(t)}=\sum\_{j=1}^{N}\partial\_{\theta\_{j}}f\_{\theta(t)}\partial\_{t}\theta\_{j}(t)$$
 
-$$=-\sum_{j=1}^{N}\partial_{\theta_{j}}f_{\theta(t)}\left\langle d\vert_{f_{\theta(t)}},\partial_{\theta_{j}}f_{\theta(t)}\right\rangle _{P(x)}$$
+$$=-\sum\_{j=1}^{N}\partial\_{\theta\_{j}}f\_{\theta(t)}\left\langle d\vert\_{f\_{\theta(t)}},\partial\_{\theta\_{j}}f\_{\theta(t)}\right\rangle \_{P(x)}$$
 
 Assuming sample distribution (sum of deltas) for $P(x)$,
 
-$$=-\sum_{j=1}^{N}\partial_{\theta_{j}}f_{\theta(t)}\frac{1}{P}\sum_{k=1}^{P}d\vert_{f_{\theta(t)}}(x_{k})^{\top}\partial_{\theta_{j}}f_{\theta(t)}(x_{k})$$
+$$=-\sum\_{j=1}^{N}\partial\_{\theta\_{j}}f\_{\theta(t)}\frac{1}{P}\sum\_{k=1}^{P}d\vert\_{f\_{\theta(t)}}(x\_{k})^{\top}\partial\_{\theta\_{j}}f\_{\theta(t)}(x\_{k})$$
 
-$$=-\frac{1}{P}\sum_{k=1}^{P}\sum_{j=1}^{N}\left(\partial_{\theta_{j}}f_{\theta(t)}\right)\left[\partial_{\theta_{j}}f_{\theta(t)}(x_{k})\right]^{\top}\left[d\vert_{f_{\theta(t)}}(x_{k})\right]$$ Now re-express $\sum_{j=1}^{N}\left(\partial_{\theta_{j}}f_{\theta(t)}\right)\left[\partial_{\theta_{j}}f_{\theta(t)}(x_{k})\right]^{\top}$
+$$=-\frac{1}{P}\sum\_{k=1}^{P}\sum\_{j=1}^{N}\left(\partial\_{\theta\_{j}}f\_{\theta(t)}\right)\left[\partial\_{\theta\_{j}}f\_{\theta(t)}(x\_{k})\right]^{\top}\left[d\vert\_{f\_{\theta(t)}}(x\_{k})\right]$$ Now re-express $\sum\_{j=1}^{N}\left(\partial\_{\theta\_{j}}f\_{\theta(t)}\right)\left[\partial\_{\theta\_{j}}f\_{\theta(t)}(x\_{k})\right]^{\top}$
 
-$$\sum_{j=1}^{N}\left(\partial_{\theta_{j}}f_{\theta(t)}\right)\left[\partial_{\theta_{j}}f_{\theta(t)}(x_{k})\right]^{\top}=\sum_{j=1}^{N}\left(\partial_{\theta_{j}}f_{\theta(t)}\otimes\partial_{\theta_{j}}f_{\theta(t)}\right)\left(\cdot,x_{k}\right)$$ with a different notation,
+$$\sum\_{j=1}^{N}\left(\partial\_{\theta\_{j}}f\_{\theta(t)}\right)\left[\partial\_{\theta\_{j}}f\_{\theta(t)}(x\_{k})\right]^{\top}=\sum\_{j=1}^{N}\left(\partial\_{\theta\_{j}}f\_{\theta(t)}\otimes\partial\_{\theta\_{j}}f\_{\theta(t)}\right)\left(\cdot,x\_{k}\right)$$ with a different notation,
 
-$$=\sum_{j=1}^{N}\left(\partial_{\theta_{j}}F(\theta)\otimes\partial_{\theta_{j}}F(\theta)\right)\left(\cdot,x_{k}\right)$$
+$$=\sum\_{j=1}^{N}\left(\partial\_{\theta\_{j}}F(\theta)\otimes\partial\_{\theta\_{j}}F(\theta)\right)\left(\cdot,x\_{k}\right)$$
 
-$$=K\left(\cdot,x_{k}\right)$$ where $K$ is a tensor product, which is called tangent kernel:
+$$=K\left(\cdot,x\_{k}\right)$$ where $K$ is a tensor product, which is called tangent kernel:
 
-$$K=\sum_{j=1}^{N}\left(\partial_{\theta_{j}}F(\theta)\otimes\partial_{\theta_{j}}F(\theta)\right)$$ Going back to the expression for the function dynamics, we have
+$$K=\sum\_{j=1}^{N}\left(\partial\_{\theta\_{j}}F(\theta)\otimes\partial\_{\theta\_{j}}F(\theta)\right)$$ Going back to the expression for the function dynamics, we have
 
-$$\partial_{t}f_{\theta(t)}=-\frac{1}{P}\sum_{k=1}^{P}K\left(\cdot,x_{k}\right)d\vert_{f_{\theta(t)}}(x_{k})$$ In the paper, they call $\frac{1}{P}\sum_{k=1}^{P}K\left(\cdot,x_{k}\right)d\vert_{f_{\theta(t)}}(x_{k})$ a kernel gradient $\nabla_{K}C\in\mathcal{F}$
+$$\partial\_{t}f\_{\theta(t)}=-\frac{1}{P}\sum\_{k=1}^{P}K\left(\cdot,x\_{k}\right)d\vert\_{f\_{\theta(t)}}(x\_{k})$$ In the paper, they call $\frac{1}{P}\sum\_{k=1}^{P}K\left(\cdot,x\_{k}\right)d\vert\_{f\_{\theta(t)}}(x\_{k})$ a kernel gradient $\nabla\_{K}C\in\mathcal{F}$
 
-$$\nabla_{K}C\vert_{f_{\theta(t)}}=\frac{1}{P}\sum_{k=1}^{P}K\left(\cdot,x_{k}\right)d\vert_{f_{\theta(t)}}(x_{k})$$ So they write the dynamics as,
+$$\nabla\_{K}C\vert\_{f\_{\theta(t)}}=\frac{1}{P}\sum\_{k=1}^{P}K\left(\cdot,x\_{k}\right)d\vert\_{f\_{\theta(t)}}(x\_{k})$$ So they write the dynamics as,
 
-$$\partial_{t}f_{\theta(t)}=-\nabla_{K}C\vert_{f_{\theta(t)}}$$ Now let's revisit the dynamics of the cost value in $\mathbb{R}$.
+$$\partial\_{t}f\_{\theta(t)}=-\nabla\_{K}C\vert\_{f\_{\theta(t)}}$$ Now let's revisit the dynamics of the cost value in $\mathbb{R}$.
 
-$$\partial_{t}C\vert_{f(t)}=\left\langle d\vert_{f(t)},\partial_{t}f(t)\right\rangle _{P(x)}$$
+$$\partial\_{t}C\vert\_{f(t)}=\left\langle d\vert\_{f(t)},\partial\_{t}f(t)\right\rangle \_{P(x)}$$
 
-$$=\frac{1}{P}\sum_{i=1}^{P}d\vert_{f(t)}(x_{i})^{\top}\partial_{t}f(t)(x_{i})$$
+$$=\frac{1}{P}\sum\_{i=1}^{P}d\vert\_{f(t)}(x\_{i})^{\top}\partial\_{t}f(t)(x\_{i})$$
 
-$$=\frac{1}{P}\sum_{i=1}^{P}d\vert_{f(t)}(x_{i})^{\top}\left[-\frac{1}{P}\sum_{k=1}^{P}K\left(x_{i},x_{k}\right)d\vert_{f(t)}(x_{k})\right]$$
+$$=\frac{1}{P}\sum\_{i=1}^{P}d\vert\_{f(t)}(x\_{i})^{\top}\left[-\frac{1}{P}\sum\_{k=1}^{P}K\left(x\_{i},x\_{k}\right)d\vert\_{f(t)}(x\_{k})\right]$$
 
-$$=-\frac{1}{P^{2}}\sum_{k=1}^{P}\sum_{i=1}^{P}d\vert_{f(t)}(x_{i})^{\top}K\left(x_{i},x_{k}\right)d\vert_{f(t)}(x_{k})$$ Here, we introduce another notation.
+$$=-\frac{1}{P^{2}}\sum\_{k=1}^{P}\sum\_{i=1}^{P}d\vert\_{f(t)}(x\_{i})^{\top}K\left(x\_{i},x\_{k}\right)d\vert\_{f(t)}(x\_{k})$$ Here, we introduce another notation.
 
-$$\langle f,g\rangle_{K}=\mathbb{E}_{x,x'\sim P(x)}\left[f(x)^{\top}K\left(x,x'\right)g(x')\right]$$ and define $\|f\|_{K}^{2}=\langle f,f\rangle_{K}$. Remembering that we deal with a sample distribution,
+$$\langle f,g\rangle\_{K}=\mathbb{E}\_{x,x'\sim P(x)}\left[f(x)^{\top}K\left(x,x'\right)g(x')\right]$$ and define $\|f\|\_{K}^{2}=\langle f,f\rangle\_{K}$. Remembering that we deal with a sample distribution,
 
-$$\partial_{t}C\vert_{f(t)}=-\|d\vert_{f(t)}\|_{K}^{2}$$ Also remember that $K$ is currently dependent on $\theta$, and since $\theta$ changes over time, $K$ is also dependent on time.
+$$\partial\_{t}C\vert\_{f(t)}=-\|d\vert\_{f(t)}\|\_{K}^{2}$$ Also remember that $K$ is currently dependent on $\theta$, and since $\theta$ changes over time, $K$ is also dependent on time.
 
 # Neural Tangent Kernel
 
-All we need to do is compute $K=\sum_{j=1}^{N}\left(\partial_{\theta_{j}}F(\theta)\otimes\partial_{\theta_{j}}F(\theta)\right)$. More concretely,
+All we need to do is compute $K=\sum\_{j=1}^{N}\left(\partial\_{\theta\_{j}}F(\theta)\otimes\partial\_{\theta\_{j}}F(\theta)\right)$. More concretely,
 
-$$K(x,x')=\sum_{j=1}^{N}\left[\partial_{\theta_{j}}f_{\theta(t)}(x)\right]\left[\partial_{\theta_{j}}f_{\theta(t)}(x')\right]^{\top}$$
+$$K(x,x')=\sum\_{j=1}^{N}\left[\partial\_{\theta\_{j}}f\_{\theta(t)}(x)\right]\left[\partial\_{\theta\_{j}}f\_{\theta(t)}(x')\right]^{\top}$$
 
-$$K_{kk'}(x,x')=\sum_{j=1}^{N}\left[\partial_{\theta_{j}}f_{\theta(t)}(x)\right]_{k}\left[\partial_{\theta_{j}}f_{\theta(t)}(x')\right]_{k'}$$ where $\left[\cdot\right]_{k}$ denotes the $k^{th}$ channel of the output. Start with the simplest model $L=1$ (input layer and output layer, no nonlinearity).
+$$K\_{kk'}(x,x')=\sum\_{j=1}^{N}\left[\partial\_{\theta\_{j}}f\_{\theta(t)}(x)\right]\_{k}\left[\partial\_{\theta\_{j}}f\_{\theta(t)}(x')\right]\_{k'}$$ where $\left[\cdot\right]\_{k}$ denotes the $k^{th}$ channel of the output. Start with the simplest model $L=1$ (input layer and output layer, no nonlinearity).
 
-$$f_{\theta}(x)=\frac{1}{\sqrt{n_{0}}}W^{(0)}x+\beta b^{(0)}$$ Now realize what the summand of $K_{kk'}^{(1)}(x,x')$ should be for this model.
+$$f\_{\theta}(x)=\frac{1}{\sqrt{n\_{0}}}W^{(0)}x+\beta b^{(0)}$$ Now realize what the summand of $K\_{kk'}^{(1)}(x,x')$ should be for this model.
 
-$$K_{kk'}^{(1)}(x,x')=\sum_{i=1}^{n_{0}}\sum_{j=1}^{n_{1}}\left[\partial_{W_{ji}^{(0)}}f_{\theta}(x)\right]_{k}\left[\partial_{W_{ji}^{(0)}}f_{\theta}(x')\right]_{k'}+\sum_{j=1}^{n_{1}}\left[\partial_{b_{j}^{(0)}}f_{\theta}(x)\right]_{k}\left[\partial_{b_{j}^{(0)}}f_{\theta}(x')\right]_{k'}$$ Note that $\left[\partial_{W_{ji}^{(0)}}f_{\theta}(x)\right]_{k}$ is $0$ if $j\neq k$, i.e. there is no change in the output of the $k^{th}$ channel of $f_{\theta}(x)$ when there is a change in $W_{ji}$ for $j\neq k$. Therefore,
+$$K\_{kk'}^{(1)}(x,x')=\sum\_{i=1}^{n\_{0}}\sum\_{j=1}^{n\_{1}}\left[\partial\_{W\_{ji}^{(0)}}f\_{\theta}(x)\right]\_{k}\left[\partial\_{W\_{ji}^{(0)}}f\_{\theta}(x')\right]\_{k'}+\sum\_{j=1}^{n\_{1}}\left[\partial\_{b\_{j}^{(0)}}f\_{\theta}(x)\right]\_{k}\left[\partial\_{b\_{j}^{(0)}}f\_{\theta}(x')\right]\_{k'}$$ Note that $\left[\partial\_{W\_{ji}^{(0)}}f\_{\theta}(x)\right]\_{k}$ is $0$ if $j\neq k$, i.e. there is no change in the output of the $k^{th}$ channel of $f\_{\theta}(x)$ when there is a change in $W\_{ji}$ for $j\neq k$. Therefore,
 
-$$K_{kk'}^{(1)}(x,x')=\sum_{i=1}^{n_{0}}\sum_{j=1}^{n_{1}}\left(\partial_{W_{ji}^{(0)}}f_{\theta}(x)\right)\left(\partial_{W_{ji}^{(0)}}f_{\theta}(x')\right)\delta_{jk}\delta_{jk'}+\sum_{j=1}^{n_{1}}\left(\partial_{b_{j}^{(0)}}f_{\theta}(x)\right)\left(\partial_{b_{j}^{(0)}}f_{\theta}(x')\right)\delta_{jk}\delta_{jk'}$$
+$$K\_{kk'}^{(1)}(x,x')=\sum\_{i=1}^{n\_{0}}\sum\_{j=1}^{n\_{1}}\left(\partial\_{W\_{ji}^{(0)}}f\_{\theta}(x)\right)\left(\partial\_{W\_{ji}^{(0)}}f\_{\theta}(x')\right)\delta\_{jk}\delta\_{jk'}+\sum\_{j=1}^{n\_{1}}\left(\partial\_{b\_{j}^{(0)}}f\_{\theta}(x)\right)\left(\partial\_{b\_{j}^{(0)}}f\_{\theta}(x')\right)\delta\_{jk}\delta\_{jk'}$$
 
 Since
 
-$$\partial_{W_{ji}^{(0)}}f_{\theta}(x)=\frac{1}{\sqrt{n_{0}}}x_{i}$$
+$$\partial\_{W\_{ji}^{(0)}}f\_{\theta}(x)=\frac{1}{\sqrt{n\_{0}}}x\_{i}$$
 
-$$\partial_{b_{j}^{(0)}}f_{\theta}(x)=\beta$$ , the kernel is
+$$\partial\_{b\_{j}^{(0)}}f\_{\theta}(x)=\beta$$ , the kernel is
 
-$$K_{kk'}^{(1)}(x,x')=\frac{1}{n_{0}}\sum_{i=1}^{n_{0}}\sum_{j=1}^{n_{1}}x_{i}x'_{i}\delta_{jk}\delta_{jk'}+\beta^{2}\sum_{j=1}^{n_{1}}\delta_{jk}\delta_{jk'}$$
+$$K\_{kk'}^{(1)}(x,x')=\frac{1}{n\_{0}}\sum\_{i=1}^{n\_{0}}\sum\_{j=1}^{n\_{1}}x\_{i}x'\_{i}\delta\_{jk}\delta\_{jk'}+\beta^{2}\sum\_{j=1}^{n\_{1}}\delta\_{jk}\delta\_{jk'}$$
 
-$$K_{kk'}^{(1)}(x,x')=\frac{1}{n_{0}}x^{\top}x'\delta_{kk'}+\beta^{2}\delta_{kk'}$$
+$$K\_{kk'}^{(1)}(x,x')=\frac{1}{n\_{0}}x^{\top}x'\delta\_{kk'}+\beta^{2}\delta\_{kk'}$$
 
-$$=\left(\frac{1}{n_{0}}x^{\top}x'+\beta^{2}\right)\delta_{kk'}$$
+$$=\left(\frac{1}{n\_{0}}x^{\top}x'+\beta^{2}\right)\delta\_{kk'}$$
 
-$$=\Sigma^{(1)}(x,x')\delta_{kk'}$$ . Next, we generalize this to deeper layers. We will see how $K^{(L+1)}(x,x')$ is a function of $K^{(L)}(x,x')$, and this relationship allows us to compute a tangent kernel for an arbitrary deep network.
+$$=\Sigma^{(1)}(x,x')\delta\_{kk'}$$ . Next, we generalize this to deeper layers. We will see how $K^{(L+1)}(x,x')$ is a function of $K^{(L)}(x,x')$, and this relationship allows us to compute a tangent kernel for an arbitrary deep network.
 
-$$K_{kk'}^{(L+1)}(x,x')=\sum_{j=1}^{\widetilde{N}}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x)\right]_{k}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x')\right]_{k'}+\sum_{l=1}^{\hat{N}}\left[\partial_{\hat{\theta}_{l}}f_{\theta}(x)\right]_{k}\left[\partial_{\hat{\theta}_{l}}f_{\theta}(x')\right]_{k'}$$ For the similar reason as in $L=1$, $\sum_{l=1}^{\hat{N}}\left[\partial_{\hat{\theta}_{l}}f_{\theta}(x)\right]_{k}\left[\partial_{\hat{\theta}_{l}}f_{\theta}(x')\right]_{k'}=\Sigma^{(L+1)}(x,x')\delta_{kk'}$. Let's dissect $\partial_{\widetilde{\theta}_{j}}f_{\theta}(x)$, where $f_{\theta}^{(L+1)}(x)=\frac{1}{\sqrt{n_{L}}}W^{(L)}\alpha_{\widetilde{\theta}}^{(L)}(x)+\beta b^{(L)}$
+$$K\_{kk'}^{(L+1)}(x,x')=\sum\_{j=1}^{\widetilde{N}}\left[\partial\_{\widetilde{\theta}\_{j}}f\_{\theta}(x)\right]\_{k}\left[\partial\_{\widetilde{\theta}\_{j}}f\_{\theta}(x')\right]\_{k'}+\sum\_{l=1}^{\hat{N}}\left[\partial\_{\hat{\theta}\_{l}}f\_{\theta}(x)\right]\_{k}\left[\partial\_{\hat{\theta}\_{l}}f\_{\theta}(x')\right]\_{k'}$$ For the similar reason as in $L=1$, $\sum\_{l=1}^{\hat{N}}\left[\partial\_{\hat{\theta}\_{l}}f\_{\theta}(x)\right]\_{k}\left[\partial\_{\hat{\theta}\_{l}}f\_{\theta}(x')\right]\_{k'}=\Sigma^{(L+1)}(x,x')\delta\_{kk'}$. Let's dissect $\partial\_{\widetilde{\theta}\_{j}}f\_{\theta}(x)$, where $f\_{\theta}^{(L+1)}(x)=\frac{1}{\sqrt{n\_{L}}}W^{(L)}\alpha\_{\widetilde{\theta}}^{(L)}(x)+\beta b^{(L)}$
 
-$$\partial_{\widetilde{\theta}_{j}}f_{\theta}(x)=\partial_{\widetilde{\theta}_{j}}\left(\frac{1}{\sqrt{n_{L}}}W^{(L)}\alpha_{\widetilde{\theta}}^{(L)}(x)+\beta b^{(L)}\right)$$
+$$\partial\_{\widetilde{\theta}\_{j}}f\_{\theta}(x)=\partial\_{\widetilde{\theta}\_{j}}\left(\frac{1}{\sqrt{n\_{L}}}W^{(L)}\alpha\_{\widetilde{\theta}}^{(L)}(x)+\beta b^{(L)}\right)$$
 
-$$=\frac{1}{\sqrt{n_{L}}}W^{(L)}\left(\partial_{\widetilde{\theta}_{j}}\alpha_{\widetilde{\theta}}^{(L)}(x)\right)$$ $\partial_{\widetilde{\theta}_{j}}\alpha^{(L)}(x)\in\mathbb{R}^{n_{L}}$.
+$$=\frac{1}{\sqrt{n\_{L}}}W^{(L)}\left(\partial\_{\widetilde{\theta}\_{j}}\alpha\_{\widetilde{\theta}}^{(L)}(x)\right)$$ $\partial\_{\widetilde{\theta}\_{j}}\alpha^{(L)}(x)\in\mathbb{R}^{n\_{L}}$.
 
-$$\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x)\right]_{k}=\frac{1}{\sqrt{n_{L}}}\sum_{i=1}^{n_{L}}W_{ki}^{(L)}\left[\partial_{\widetilde{\theta}_{j}}\alpha_{\widetilde{\theta}}^{(L)}(x)\right]_{i}$$ Note that $\left[\partial_{\widetilde{\theta}_{j}}\alpha^{(L)}(x)\right]_{i}=\left[\partial_{\widetilde{\theta}_{j}}\tilde{\alpha}^{(L)}(x)\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}^{(L)}(x)\right)}}\right]_{i}$.
+$$\left[\partial\_{\widetilde{\theta}\_{j}}f\_{\theta}(x)\right]\_{k}=\frac{1}{\sqrt{n\_{L}}}\sum\_{i=1}^{n\_{L}}W\_{ki}^{(L)}\left[\partial\_{\widetilde{\theta}\_{j}}\alpha\_{\widetilde{\theta}}^{(L)}(x)\right]\_{i}$$ Note that $\left[\partial\_{\widetilde{\theta}\_{j}}\alpha^{(L)}(x)\right]\_{i}=\left[\partial\_{\widetilde{\theta}\_{j}}\tilde{\alpha}^{(L)}(x)\right]\_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}^{(L)}(x)\right)}}\right]\_{i}$.
 
-$$\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x)\right]_{k}=\sum_{i=1}^{n_{L}}\frac{1}{\sqrt{n_{L}}}W_{ki}^{(L)}\left[\partial_{\widetilde{\theta}_{j}}\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}$$ So the first summation is
+$$\left[\partial\_{\widetilde{\theta}\_{j}}f\_{\theta}(x)\right]\_{k}=\sum\_{i=1}^{n\_{L}}\frac{1}{\sqrt{n\_{L}}}W\_{ki}^{(L)}\left[\partial\_{\widetilde{\theta}\_{j}}\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x)\right]\_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]\_{i}$$ So the first summation is
 
-$$\sum_{j=1}^{\widetilde{N}}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x)\right]_{k}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x')\right]_{k'}=\frac{1}{n_{L}}\sum_{i,i'=1}^{n_{L}}\left\{ \sum_{j=1}^{\widetilde{N}}\left[\partial_{\widetilde{\theta}_{j}}\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right]_{i}\left[\partial_{\widetilde{\theta}_{j}}\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right]_{i'}\right\} \left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]_{i'}W_{ki}^{(L)}W_{k'i'}^{(L)}$$ Note that $\sum_{j=1}^{\widetilde{N}}\left[\partial_{\widetilde{\theta}_{j}}\tilde{\alpha}^{(L)}(x)\right]_{i}\left[\partial_{\widetilde{\theta}_{j}}\tilde{\alpha}^{(L)}(x)\right]_{i'}=K_{ii'}^{(L)}(x,x')$.
+$$\sum\_{j=1}^{\widetilde{N}}\left[\partial\_{\widetilde{\theta}\_{j}}f\_{\theta}(x)\right]\_{k}\left[\partial\_{\widetilde{\theta}\_{j}}f\_{\theta}(x')\right]\_{k'}=\frac{1}{n\_{L}}\sum\_{i,i'=1}^{n\_{L}}\left\{ \sum\_{j=1}^{\widetilde{N}}\left[\partial\_{\widetilde{\theta}\_{j}}\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x)\right]\_{i}\left[\partial\_{\widetilde{\theta}\_{j}}\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x')\right]\_{i'}\right\} \left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]\_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]\_{i'}W\_{ki}^{(L)}W\_{k'i'}^{(L)}$$ Note that $\sum\_{j=1}^{\widetilde{N}}\left[\partial\_{\widetilde{\theta}\_{j}}\tilde{\alpha}^{(L)}(x)\right]\_{i}\left[\partial\_{\widetilde{\theta}\_{j}}\tilde{\alpha}^{(L)}(x)\right]\_{i'}=K\_{ii'}^{(L)}(x,x')$.
 
-$$\sum_{j=1}^{\widetilde{N}}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x)\right]_{k}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x')\right]_{k'}=\frac{1}{n_{L}}\sum_{i,i'=1}^{n_{L}}\left(K_{ii'}^{(L)}(x,x')\right)\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]_{i'}W_{ki}^{(L)}W_{k'i'}^{(L)}$$ Therefore,
+$$\sum\_{j=1}^{\widetilde{N}}\left[\partial\_{\widetilde{\theta}\_{j}}f\_{\theta}(x)\right]\_{k}\left[\partial\_{\widetilde{\theta}\_{j}}f\_{\theta}(x')\right]\_{k'}=\frac{1}{n\_{L}}\sum\_{i,i'=1}^{n\_{L}}\left(K\_{ii'}^{(L)}(x,x')\right)\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]\_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]\_{i'}W\_{ki}^{(L)}W\_{k'i'}^{(L)}$$ Therefore,
 
-$$K_{kk'}^{(L+1)}(x,x')=\frac{1}{n_{L}}\sum_{i,i'=1}^{n_{L}}\left(K_{ii'}^{(L)}(x,x')\right)\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]_{i'}W_{ki}^{(L)}W_{k'i'}^{(L)}+\Sigma^{(L+1)}(x,x')\delta_{kk'}$$ To simplify further, we need to take $n_{L}\rightarrow\infty$. First, $K_{ii'}^{(L)}(x,x')$ simplifies (Proposition 1). $$K_{ii'}^{(L)}(x,x')\xrightarrow{n_{l}\rightarrow\infty\forall l}K_{\infty}^{(L)}(x,x')\delta_{ii'}$$ Detailed proof is required to show we need to sequentially expand the widths from the first hidden layer to the next and so on. We prove Proposition 1 by showing that the summation term in the above $K_{kk'}^{(L+1)}(x,x')$ equation has the $\delta_{kk'}$ factor when $n_{l}\rightarrow\infty\quad\forall l\leq L$. We don't need to worry about the second term, since it already has $\delta_{kk'}$. When $n_{l}\rightarrow\infty\quad\forall l\leq L$, the summation becomes expectation over the randomness in the network induced by the random weights and biases.
+$$K\_{kk'}^{(L+1)}(x,x')=\frac{1}{n\_{L}}\sum\_{i,i'=1}^{n\_{L}}\left(K\_{ii'}^{(L)}(x,x')\right)\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]\_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]\_{i'}W\_{ki}^{(L)}W\_{k'i'}^{(L)}+\Sigma^{(L+1)}(x,x')\delta\_{kk'}$$ To simplify further, we need to take $n\_{L}\rightarrow\infty$. First, $K\_{ii'}^{(L)}(x,x')$ simplifies (Proposition 1). $$K\_{ii'}^{(L)}(x,x')\xrightarrow{n\_{l}\rightarrow\infty\forall l}K\_{\infty}^{(L)}(x,x')\delta\_{ii'}$$ Detailed proof is required to show we need to sequentially expand the widths from the first hidden layer to the next and so on. We prove Proposition 1 by showing that the summation term in the above $K\_{kk'}^{(L+1)}(x,x')$ equation has the $\delta\_{kk'}$ factor when $n\_{l}\rightarrow\infty\quad\forall l\leq L$. We don't need to worry about the second term, since it already has $\delta\_{kk'}$. When $n\_{l}\rightarrow\infty\quad\forall l\leq L$, the summation becomes expectation over the randomness in the network induced by the random weights and biases.
 
-$$\sum_{j=1}^{\widetilde{N}}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x)\right]_{k}\left[\partial_{\widetilde{\theta}_{j}}f_{\theta}(x')\right]_{k'}\xrightarrow{n_{l}\rightarrow\infty\forall l}\mathbb{E}_{\widetilde{\theta}\sim P(\theta)}\left[\left(K_{ii'}^{(L)}(x,x')\right)\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]_{i'}W_{ki}^{(L)}W_{k'i'}^{(L)}\right]$$
+$$\sum\_{j=1}^{\widetilde{N}}\left[\partial\_{\widetilde{\theta}\_{j}}f\_{\theta}(x)\right]\_{k}\left[\partial\_{\widetilde{\theta}\_{j}}f\_{\theta}(x')\right]\_{k'}\xrightarrow{n\_{l}\rightarrow\infty\forall l}\mathbb{E}\_{\widetilde{\theta}\sim P(\theta)}\left[\left(K\_{ii'}^{(L)}(x,x')\right)\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]\_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]\_{i'}W\_{ki}^{(L)}W\_{k'i'}^{(L)}\right]$$
 
-$$=\mathbb{E}_{\widetilde{\theta}\sim P(\theta)}\left[\left(K_{ii'}^{(L)}(x,x')\right)\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]_{i'}\right]\mathbb{E}_{\widetilde{\theta}\sim P(\theta)}\left[W_{ki}^{(L)}W_{k'i'}^{(L)}\right]$$ The decomposition of the expectation in the second equality is due to the independence between the randomness of $W^{(L)}$ and the randomness of $\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)$. It is evident that $\mathbb{E}_{\widetilde{\theta}\sim P(\theta)}\left[W_{ki}^{(L)}W_{k'i'}^{(L)}\right]=\delta_{kk'}\delta_{ii'}$. Therefore, at the large width limit,
+$$=\mathbb{E}\_{\widetilde{\theta}\sim P(\theta)}\left[\left(K\_{ii'}^{(L)}(x,x')\right)\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]\_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]\_{i'}\right]\mathbb{E}\_{\widetilde{\theta}\sim P(\theta)}\left[W\_{ki}^{(L)}W\_{k'i'}^{(L)}\right]$$ The decomposition of the expectation in the second equality is due to the independence between the randomness of $W^{(L)}$ and the randomness of $\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x)$. It is evident that $\mathbb{E}\_{\widetilde{\theta}\sim P(\theta)}\left[W\_{ki}^{(L)}W\_{k'i'}^{(L)}\right]=\delta\_{kk'}\delta\_{ii'}$. Therefore, at the large width limit,
 
-$$K_{kk'}^{(L+1)}(x,x')=\frac{1}{n_{L}}\sum_{i=1}^{n_{L}}\left(K_{ii}^{(L)}(x,x')\right)\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]_{i}\delta_{kk'}+\Sigma^{(L+1)}(x,x')\delta_{kk'}$$ Due to symmetry of all neurons at the large width limit, the summation becomes an average over $i$'s.
+$$K\_{kk'}^{(L+1)}(x,x')=\frac{1}{n\_{L}}\sum\_{i=1}^{n\_{L}}\left(K\_{ii}^{(L)}(x,x')\right)\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]\_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]\_{i}\delta\_{kk'}+\Sigma^{(L+1)}(x,x')\delta\_{kk'}$$ Due to symmetry of all neurons at the large width limit, the summation becomes an average over $i$'s.
 
-$$K_{kk'}^{(L+1)}(x,x')=\mathbb{E}_{\tilde{\alpha}_{\widetilde{\theta}}^{(L)}\sim\mathcal{GP}}\left[\left(K_{ii}^{(L)}(x,x')\right)\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]\delta_{kk'}+\Sigma^{(L+1)}(x,x')\delta_{kk'}$$ This shows that $K_{kk'}^{(L+1)}(x,x')$ concentrates as $n_{L}\rightarrow\infty$. Here it is important to note that we take $n_{l}\rightarrow\infty\quad\forall l\leq L-1$ before $n_{L}\rightarrow\infty$, i.e. before the above averaging $\mathbb{E}_{i}[\cdot]$ appears. That is because, by taking $n_{L-1}\rightarrow\infty$ first, we concentrate $K_{ii}^{(L)}(x,x')$ to $K_{\infty}^{(L)}(x,x')$, such that we have $K_{\infty}^{(L)}(x,x')$ outside the above $\mathbb{E}_{i}[\cdot]$ when we take $n_{L}\rightarrow\infty$. Following through with this order of expansion, we have
+$$K\_{kk'}^{(L+1)}(x,x')=\mathbb{E}\_{\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}\sim\mathcal{GP}}\left[\left(K\_{ii}^{(L)}(x,x')\right)\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x)\right)}}\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]\delta\_{kk'}+\Sigma^{(L+1)}(x,x')\delta\_{kk'}$$ This shows that $K\_{kk'}^{(L+1)}(x,x')$ concentrates as $n\_{L}\rightarrow\infty$. Here it is important to note that we take $n\_{l}\rightarrow\infty\quad\forall l\leq L-1$ before $n\_{L}\rightarrow\infty$, i.e. before the above averaging $\mathbb{E}\_{i}[\cdot]$ appears. That is because, by taking $n\_{L-1}\rightarrow\infty$ first, we concentrate $K\_{ii}^{(L)}(x,x')$ to $K\_{\infty}^{(L)}(x,x')$, such that we have $K\_{\infty}^{(L)}(x,x')$ outside the above $\mathbb{E}\_{i}[\cdot]$ when we take $n\_{L}\rightarrow\infty$. Following through with this order of expansion, we have
 
-$$K_{kk'}^{(L+1)}(x,x')=K_{\infty}^{(L)}(x,x')\mathbb{E}_{i}\left[\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]_{i}\right]\delta_{kk'}+\Sigma^{(L+1)}(x,x')\delta_{kk'}$$
+$$K\_{kk'}^{(L+1)}(x,x')=K\_{\infty}^{(L)}(x,x')\mathbb{E}\_{i}\left[\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x)\right)}}\right]\_{i}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]\_{i}\right]\delta\_{kk'}+\Sigma^{(L+1)}(x,x')\delta\_{kk'}$$
 
-Introducing new notation $\dot{\Sigma}^{(L+1)}=\mathbb{E}_{\tilde{\alpha}_{\widetilde{\theta}}^{(L)}\sim\mathcal{GP}}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x)\right)}}\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]$ , we have
+Introducing new notation $\dot{\Sigma}^{(L+1)}=\mathbb{E}\_{\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}\sim\mathcal{GP}}\left[\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x)\right)}}\dot{\sigma}\text{\ensuremath{\left(\tilde{\alpha}\_{\widetilde{\theta}}^{(L)}(x')\right)}}\right]$ , we have
 
-$$K_{kk'}^{(L+1)}(x,x')=\left(K_{\infty}^{(L)}(x,x')\dot{\Sigma}^{(L+1)}+\Sigma^{(L+1)}(x,x')\right)\delta_{kk'}$$
+$$K\_{kk'}^{(L+1)}(x,x')=\left(K\_{\infty}^{(L)}(x,x')\dot{\Sigma}^{(L+1)}+\Sigma^{(L+1)}(x,x')\right)\delta\_{kk'}$$
 
-$$K_{\infty}^{(L+1)}(x,x')=K_{\infty}^{(L)}(x,x')\dot{\Sigma}^{(L+1)}+\Sigma^{(L+1)}(x,x')$$ To summarize,
+$$K\_{\infty}^{(L+1)}(x,x')=K\_{\infty}^{(L)}(x,x')\dot{\Sigma}^{(L+1)}+\Sigma^{(L+1)}(x,x')$$ To summarize,
 
-$$K_{\infty}^{(1)}(x,x')=\Sigma^{(1)}(x,x')$$
+$$K\_{\infty}^{(1)}(x,x')=\Sigma^{(1)}(x,x')$$
 
-$$K_{\infty}^{(L+1)}(x,x')=K_{\infty}^{(L)}(x,x')\dot{\Sigma}^{(L+1)}+\Sigma^{(L+1)}(x,x')$$
+$$K\_{\infty}^{(L+1)}(x,x')=K\_{\infty}^{(L)}(x,x')\dot{\Sigma}^{(L+1)}+\Sigma^{(L+1)}(x,x')$$
+
