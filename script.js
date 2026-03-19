@@ -1,63 +1,112 @@
-const canvas = document.getElementById("plot");
-const container = document.getElementById("plot-container");
+const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-let phase = 0;
-let cssWidth = 0;
-let cssHeight = 0;
+const dots = [];
+const pointers = new Map();
 
-function resizeCanvas() {
-  cssWidth = container.clientWidth;
-  cssHeight = container.clientHeight;
+const spacing = 28;
+const margin = 28;
 
-  const dpr = window.devicePixelRatio || 1;
+const spring = 0.08;
+const damping = 0.88;
+const influenceRadius = 90;
+const pushStrength = 6;
 
-  canvas.width = Math.round(cssWidth * dpr);
-  canvas.height = Math.round(cssHeight * dpr);
-
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+// build a grid of dots
+for (let y = margin; y <= canvas.height - margin; y += spacing) {
+  for (let x = margin; x <= canvas.width - margin; x += spacing) {
+    dots.push({
+      x,
+      y,
+      homeX: x,
+      homeY: y,
+      vx: 0,
+      vy: 0
+    });
+  }
 }
 
+function getPointerPos(e) {
+  const rect = canvas.getBoundingClientRect();
+
+  return {
+    x: (e.clientX - rect.left) * canvas.width / rect.width,
+    y: (e.clientY - rect.top) * canvas.height / rect.height
+  };
+}
+
+function setPointer(e) {
+  pointers.set(e.pointerId, getPointerPos(e));
+}
+
+function removePointer(e) {
+  pointers.delete(e.pointerId);
+}
+
+canvas.addEventListener("pointerdown", (e) => {
+  canvas.setPointerCapture(e.pointerId);
+  setPointer(e);
+});
+
+canvas.addEventListener("pointermove", (e) => {
+  // mouse: respond on hover
+  // touch: respond while active
+  if (e.pointerType === "mouse" || pointers.has(e.pointerId)) {
+    setPointer(e);
+  }
+});
+
+canvas.addEventListener("pointerup", removePointer);
+canvas.addEventListener("pointercancel", removePointer);
+
+canvas.addEventListener("pointerleave", (e) => {
+  if (e.pointerType === "mouse") {
+    removePointer(e);
+  }
+});
 
 function draw() {
-  const W = cssWidth;
-  const H = cssHeight;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  ctx.clearRect(0, 0, W, H);
-
-
-  // sine wave
-  const padding = 20;
-  const amplitude = (H - 2 * padding) / 2;
-
-  const cyclesVisible = 2;
-  const xmin = -cyclesVisible * Math.PI;
-  const xmax =  cyclesVisible * Math.PI;
-
-  ctx.strokeStyle = "black";
-  ctx.lineWidth = 10;
-  ctx.beginPath();
-
-  for (let px = 0; px < W; px++) {
-    const t = px / (W - 1);
-    const x = xmin + t * (xmax - xmin);
-    const y = Math.sin(x + phase);
-    const py = H / 2 - amplitude * y;
-
-    if (px === 0) {
-      ctx.moveTo(px, py);
-    } else {
-      ctx.lineTo(px, py);
-    }
+  // optional: draw soft circles showing active interaction zones
+  for (const p of pointers.values()) {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, influenceRadius, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(80, 120, 255, 0.06)";
+    ctx.fill();
   }
 
-  ctx.stroke();
+  for (const d of dots) {
+    let ax = (d.homeX - d.x) * spring;
+    let ay = (d.homeY - d.y) * spring;
 
-  phase += 0.03;
+    for (const p of pointers.values()) {
+      const dx = d.x - p.x;
+      const dy = d.y - p.y;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist > 0 && dist < influenceRadius) {
+        const force = (1 - dist / influenceRadius) * pushStrength;
+        ax += (dx / dist) * force;
+        ay += (dy / dist) * force;
+      }
+    }
+
+    d.vx = (d.vx + ax) * damping;
+    d.vy = (d.vy + ay) * damping;
+    d.x += d.vx;
+    d.y += d.vy;
+
+    const displacement = Math.hypot(d.x - d.homeX, d.y - d.homeY);
+    const r = 3 + Math.min(displacement * 0.05, 3);
+
+    ctx.beginPath();
+    ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = "rgb(40, 80, 220)";
+    ctx.fill();
+  }
+
   requestAnimationFrame(draw);
 }
 
-resizeCanvas();
-requestAnimationFrame(draw);
-
-new ResizeObserver(resizeCanvas).observe(container);
+draw();
