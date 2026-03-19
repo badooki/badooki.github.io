@@ -7,6 +7,17 @@
 
 ---
 
+## Advisors
+
+| Name | Role | Affiliation |
+|------|------|-------------|
+| Prof. SueYeon Chung | Postdoc advisor | Harvard & NYU |
+| Prof. Daniel D. Lee | PhD co-advisor | Cornell Tech |
+| Prof. Johnathan D. Victor | PhD co-advisor | Weill Cornell Medicine |
+| Prof. Vikas Bhandawat | RA supervisor | Duke University (now Drexel) |
+
+---
+
 ## Employment
 
 | Period | Position | Institution |
