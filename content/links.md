@@ -1,0 +1,4 @@
+- [Google Scholar](https://scholar.google.com/citations?user=nmMGiiUAAAAJ) — publications and citation metrics
+- [GitHub](https://github.com/badooki) — code and projects
+- [LinkedIn](https://www.linkedin.com/in/chanwoo-chun-b00182133/) — professional profile
+- Email: [cchun@g.harvard.edu](mailto:cchun@g.harvard.edu)

@@ -1,16 +1,48 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Interactive Dots</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chan Woo Chun</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <h1>Push the dots</h1>
-    <p>Move your cursor, or drag your finger on a phone.</p>
+    <canvas id="bg"></canvas>
 
-    <canvas id="canvas" width="700" height="450"></canvas>
+    <div class="page">
 
+      <header class="site-header">
+        <img class="site-photo" src="profile.JPG" alt="Chanwoo Chun">
+        <h1 class="site-name">Chanwoo Chun</h1>
+        <p class="site-tagline">Computational Neuroscience &amp; Machine Learning</p>
+      </header>
+
+      <div class="cells">
+
+        <section class="cell" data-md="content/bio.md">
+          <h2 class="cell-title">Biography</h2>
+          <div class="cell-body"></div>
+        </section>
+
+        <section class="cell cell--large" data-md="content/cv.md">
+          <h2 class="cell-title">Curriculum Vitae</h2>
+          <div class="cell-body"></div>
+        </section>
+
+        <!-- Cell 3: reserved for future content (research highlights, animations, etc.) -->
+
+        <section class="cell" data-md="content/links.md">
+          <h2 class="cell-title">Links</h2>
+          <div class="cell-body"></div>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

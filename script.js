@@ -1,112 +1,74 @@
-const canvas = document.getElementById("canvas");
+/* ── Animated dot background ──────────────────────────────── */
+const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 
+let W, H;
 const dots = [];
-const pointers = new Map();
+const spacing = 40;
+let pointer = { x: -9999, y: -9999 };
 
-const spacing = 28;
-const margin = 28;
-
-const spring = 0.08;
-const damping = 0.88;
-const influenceRadius = 90;
-const pushStrength = 6;
-
-// build a grid of dots
-for (let y = margin; y <= canvas.height - margin; y += spacing) {
-  for (let x = margin; x <= canvas.width - margin; x += spacing) {
-    dots.push({
-      x,
-      y,
-      homeX: x,
-      homeY: y,
-      vx: 0,
-      vy: 0
-    });
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  dots.length = 0;
+  for (let y = 20; y < H; y += spacing) {
+    for (let x = 20; x < W; x += spacing) {
+      dots.push({ x, y, homeX: x, homeY: y, vx: 0, vy: 0 });
+    }
   }
 }
 
-function getPointerPos(e) {
-  const rect = canvas.getBoundingClientRect();
-
-  return {
-    x: (e.clientX - rect.left) * canvas.width / rect.width,
-    y: (e.clientY - rect.top) * canvas.height / rect.height
-  };
-}
-
-function setPointer(e) {
-  pointers.set(e.pointerId, getPointerPos(e));
-}
-
-function removePointer(e) {
-  pointers.delete(e.pointerId);
-}
-
-canvas.addEventListener("pointerdown", (e) => {
-  canvas.setPointerCapture(e.pointerId);
-  setPointer(e);
-});
-
-canvas.addEventListener("pointermove", (e) => {
-  // mouse: respond on hover
-  // touch: respond while active
-  if (e.pointerType === "mouse" || pointers.has(e.pointerId)) {
-    setPointer(e);
-  }
-});
-
-canvas.addEventListener("pointerup", removePointer);
-canvas.addEventListener("pointercancel", removePointer);
-
-canvas.addEventListener("pointerleave", (e) => {
-  if (e.pointerType === "mouse") {
-    removePointer(e);
-  }
-});
+window.addEventListener("resize", resize);
+window.addEventListener("pointermove", (e) => { pointer.x = e.clientX; pointer.y = e.clientY; });
+window.addEventListener("pointerleave", () => { pointer.x = -9999; pointer.y = -9999; });
 
 function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // optional: draw soft circles showing active interaction zones
-  for (const p of pointers.values()) {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, influenceRadius, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(80, 120, 255, 0.06)";
-    ctx.fill();
-  }
-
+  ctx.clearRect(0, 0, W, H);
   for (const d of dots) {
-    let ax = (d.homeX - d.x) * spring;
-    let ay = (d.homeY - d.y) * spring;
-
-    for (const p of pointers.values()) {
-      const dx = d.x - p.x;
-      const dy = d.y - p.y;
-      const dist = Math.hypot(dx, dy);
-
-      if (dist > 0 && dist < influenceRadius) {
-        const force = (1 - dist / influenceRadius) * pushStrength;
-        ax += (dx / dist) * force;
-        ay += (dy / dist) * force;
-      }
+    let ax = (d.homeX - d.x) * 0.05;
+    let ay = (d.homeY - d.y) * 0.05;
+    const dx = d.x - pointer.x;
+    const dy = d.y - pointer.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist > 0 && dist < 120) {
+      const force = (1 - dist / 120) * 2.5;
+      ax += (dx / dist) * force;
+      ay += (dy / dist) * force;
     }
-
-    d.vx = (d.vx + ax) * damping;
-    d.vy = (d.vy + ay) * damping;
+    d.vx = (d.vx + ax) * 0.9;
+    d.vy = (d.vy + ay) * 0.9;
     d.x += d.vx;
     d.y += d.vy;
-
-    const displacement = Math.hypot(d.x - d.homeX, d.y - d.homeY);
-    const r = 3 + Math.min(displacement * 0.05, 3);
-
     ctx.beginPath();
-    ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
-    ctx.fillStyle = "rgb(40, 80, 220)";
+    ctx.arc(d.x, d.y, 2.2, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(0, 0, 0, 0.13)";
     ctx.fill();
   }
-
   requestAnimationFrame(draw);
 }
 
+resize();
 draw();
+
+/* ── Markdown cell loader ─────────────────────────────────── */
+marked.setOptions({ breaks: true });
+
+document.querySelectorAll(".cell[data-md]").forEach(async (cell) => {
+  const body = cell.querySelector(".cell-body");
+  const src = cell.dataset.md;
+
+  body.classList.add("loading");
+  body.textContent = "Loading…";
+
+  try {
+    const res = await fetch(src);
+    if (!res.ok) throw new Error(`${res.status}`);
+    const text = await res.text();
+    body.classList.remove("loading");
+    body.innerHTML = marked.parse(text);
+  } catch (err) {
+    body.classList.remove("loading");
+    body.textContent = `Could not load ${src}.`;
+    console.error(err);
+  }
+});
