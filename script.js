@@ -41,7 +41,7 @@ function draw() {
     d.y += d.vy;
     ctx.beginPath();
     ctx.arc(d.x, d.y, 2.2, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(0, 0, 0, 0.13)";
+    ctx.fillStyle = "rgba(212, 135, 42, 0.18)";
     ctx.fill();
   }
   requestAnimationFrame(draw);
@@ -49,6 +49,13 @@ function draw() {
 
 resize();
 draw();
+
+/* ── Collapsible cells ────────────────────────────────────── */
+document.querySelectorAll(".cell-title").forEach((title) => {
+  title.addEventListener("click", () => {
+    title.closest(".cell").classList.toggle("cell--collapsed");
+  });
+});
 
 /* ── Markdown cell loader ─────────────────────────────────── */
 marked.setOptions({ breaks: true });
