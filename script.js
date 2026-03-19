@@ -18,6 +18,7 @@ function resizeCanvas() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
+
 function draw() {
   const W = cssWidth;
   const H = cssHeight;
